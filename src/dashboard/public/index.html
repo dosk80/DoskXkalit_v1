@@ -1,0 +1,3007 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Cavor-Xv3-11/x</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0f1e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="/socket.io/socket.io.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   Cavor-Xv3-11/x — Premium Dashboard v3.0
+   Dark Glassmorphism · RTL · Mobile-First
+   ═══════════════════════════════════════════════════════════════ */
+:root{--bg:#0a0f1e;--bg2:#101628;--bg3:#161d33;--glass:rgba(255,255,255,.04);--glass2:rgba(255,255,255,.07);--glass3:rgba(255,255,255,.12);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);--text:#edf2f7;--t2:rgba(237,242,247,.6);--t3:rgba(237,242,247,.3);--blue:#4f8efa;--green:#34d399;--red:#f87171;--yellow:#fbbf24;--purple:#c084fc;--cyan:#22d3ee;--orange:#fb923c;--pink:#f472b6;--r:16px;--r2:12px;--r3:8px;--spring:cubic-bezier(.34,1.56,.64,1);--nav-h:64px;--sidebar-w:220px;--safe-b:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:9px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ── Background Animation ── */
+.bg-canvas{position:fixed;inset:0;z-index:-2;overflow:hidden}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.1;animation:orbFloat 25s ease-in-out infinite}
+.bg-orb-1{width:50vw;height:50vw;background:radial-gradient(circle,#4f8efa,transparent);top:-20%;right:-15%}
+.bg-orb-2{width:40vw;height:40vw;background:radial-gradient(circle,#c084fc,transparent);bottom:-20%;left:-10%;animation-delay:-8s}
+.bg-orb-3{width:30vw;height:30vw;background:radial-gradient(circle,#34d399,transparent);top:40%;left:40%;animation-delay:-15s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(3%,4%) scale(1.05)}66%{transform:translate(-2%,-3%) scale(.97)}}
+body::after{content:'';position:fixed;inset:0;z-index:-1;background:rgba(10,15,30,.3);pointer-events:none}
+
+/* ── Toast Notifications ── */
+#toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:min(380px,calc(100% - 32px))}
+.toast{padding:12px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;color:#fff;pointer-events:auto;animation:toastIn .3s var(--spring);text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.5);backdrop-filter:blur(10px)}
+.toast.success{background:rgba(52,211,153,.88)}.toast.error{background:rgba(248,113,113,.88)}.toast.warn{background:rgba(251,191,36,.82)}.toast.ok{background:rgba(79,142,250,.88)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ═══ LOGIN ═══ */
+#login-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+#login-screen.hidden{display:none}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.lc{background:var(--glass2);backdrop-filter:blur(40px);border:1px solid var(--border2);border-radius:28px;padding:52px 40px;width:min(420px,calc(100% - 40px));text-align:center;animation:cardIn .6s var(--spring);box-shadow:0 24px 80px rgba(0,0,0,.4)}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.lc .angel-av{width:88px;height:88px;border-radius:26px;background:linear-gradient(135deg,rgba(79,142,250,.2),rgba(192,132,252,.2));border:1px solid var(--border2);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform .3s var(--spring)}
+.lc .angel-av:hover{transform:scale(1.05) rotate(2deg)}
+.lc .angel-av img{width:100%;height:100%;object-fit:cover}
+.lc h2{font-size:26px;font-weight:800;margin:0 0 4px;letter-spacing:-.5px;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lc p{font-size:13px;color:var(--t2);margin-bottom:28px}
+.lc input{width:100%;padding:14px 18px;border-radius:var(--r2);border:1.5px solid var(--border2);background:rgba(0,0,0,.3);color:var(--text);font-size:15px;outline:none;transition:all .25s;margin-bottom:16px;text-align:center}
+.lc input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(79,142,250,.12)}
+.lc-btn{width:100%;padding:14px;border-radius:var(--r2);border:none;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;box-shadow:0 4px 20px rgba(79,142,250,.35)}
+.lc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(79,142,250,.45)}
+.lc-btn:active{transform:scale(.98)}
+.lc-err{color:var(--red);font-size:13px;margin-top:14px;min-height:18px}
+
+/* ═══ HEADER ═══ */
+.hdr{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(10,15,30,.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.hdr-brand{display:flex;align-items:center;gap:12px}
+.hdr-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(79,142,250,.2),rgba(192,132,252,.2));border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.hdr-icon img{width:100%;height:100%;object-fit:cover}
+.hdr-title{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.hdr-sub{font-size:11px;color:var(--t3)}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.status-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--glass)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--red);transition:all .3s}
+.status-pill.online{border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.1)}
+.status-pill.online .status-dot{background:var(--green);box-shadow:0 0 8px var(--green)}
+.status-pill.connecting{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08)}
+.status-pill.connecting .status-dot{background:var(--yellow);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.status-pill.online #statusText{color:var(--green)}
+.status-pill.connecting #statusText{color:var(--yellow)}
+.status-pill.offline #statusText{color:var(--red)}
+.logout-btn{padding:6px 14px;border-radius:var(--r2);border:1px solid var(--border);background:var(--glass);color:var(--t2);font-size:12px;cursor:pointer;transition:all .2s}
+.logout-btn:hover{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.25);color:var(--red)}
+
+/* ═══ LAYOUT ═══ */
+.app-layout{display:flex;min-height:calc(100vh - 53px)}
+.main-sidebar{width:var(--sidebar-w);position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;border-left:1px solid var(--border);background:rgba(16,22,40,.7);backdrop-filter:blur(12px);padding:10px 6px;flex-shrink:0;display:flex;flex-direction:column;gap:1px}
+.main{flex:1;padding:16px;overflow-y:auto;padding-bottom:32px}
+.page-wrap{max-width:1200px;margin:0 auto}
+
+/* ── Sidebar Nav ── */
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r2);color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.nav-item:hover{background:var(--glass2);color:var(--text)}
+.nav-item.active{background:rgba(79,142,250,.1);color:var(--blue);border-color:rgba(79,142,250,.18);font-weight:600}
+.nav-item .nav-ic{font-size:16px;width:22px;text-align:center}
+.nav-sep{height:1px;background:var(--border);margin:6px 14px}
+
+/* ── Bottom Nav (Mobile) ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(10,15,30,.94);backdrop-filter:blur(24px);border-top:1px solid var(--border);padding:6px 8px calc(6px + var(--safe-b))}
+.bottom-nav-inner{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.bottom-nav-inner::-webkit-scrollbar{display:none}
+.bn{flex:1;min-width:54px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;border-radius:var(--r2);border:none;background:transparent;color:var(--t3);font-size:10px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;font-weight:500}
+.bn:active{transform:scale(.9)}
+.bn.active{color:var(--blue);background:rgba(79,142,250,.1)}
+.bn-ic{font-size:19px}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--glass2);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;transition:all .25s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* ── Stat Cards ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--glass);border:1px solid var(--border);border-radius:var(--r2);padding:16px 14px;text-align:center;transition:all .3s var(--spring);position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,.02));opacity:0;transition:opacity .3s}
+.stat:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.stat:hover::before{opacity:1}
+.stat-ic{font-size:22px;margin-bottom:6px}
+.stat-v{font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+.stat-l{font-size:11px;color:var(--t3);margin-top:4px;font-weight:500}
+.s-blue{border-color:rgba(79,142,250,.15)}.s-blue .stat-v{color:var(--blue)}
+.s-green{border-color:rgba(52,211,153,.15)}.s-green .stat-v{color:var(--green)}
+.s-purple{border-color:rgba(192,132,252,.15)}.s-purple .stat-v{color:var(--purple)}
+.s-yellow{border-color:rgba(251,191,36,.15)}.s-yellow .stat-v{color:var(--yellow)}
+.s-cyan{border-color:rgba(34,211,238,.15)}.s-cyan .stat-v{color:var(--cyan)}
+.s-orange{border-color:rgba(251,146,60,.15)}.s-orange .stat-v{color:var(--orange)}
+.s-pink{border-color:rgba(244,114,182,.15)}.s-pink .stat-v{color:var(--pink)}
+.s-red{border-color:rgba(248,113,113,.15)}.s-red .stat-v{color:var(--red)}
+.s-teal{border-color:rgba(34,211,238,.15)}.s-teal .stat-v{color:var(--cyan)}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--r2);border:1px solid var(--border);background:var(--glass2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn:hover{background:var(--glass3);border-color:var(--border2)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#3b7aed);border-color:rgba(79,142,250,.3);color:#fff;box-shadow:0 2px 12px rgba(79,142,250,.2)}
+.btn-primary:hover{box-shadow:0 4px 20px rgba(79,142,250,.35)}
+.btn-success{background:linear-gradient(135deg,var(--green),#22b07a);border-color:rgba(52,211,153,.3);color:#fff}
+.btn-danger{background:linear-gradient(135deg,var(--red),#dc4444);border-color:rgba(248,113,113,.3);color:#fff}
+.btn-warn{background:linear-gradient(135deg,var(--yellow),#d4a017);border-color:rgba(251,191,36,.3);color:#000}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#a855f7);border-color:rgba(192,132,252,.3);color:#fff}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--t2)}
+.btn-ghost:hover{background:var(--glass2);color:var(--text)}
+.btn-sm{padding:7px 12px;font-size:12px}
+.btn-xs{padding:5px 10px;font-size:11px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── Form Elements ── */
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;color:var(--t2);margin-bottom:6px;font-weight:500}
+.fg input,.fg textarea,.fg select,.form-input,.form-ctrl{width:100%;padding:10px 14px;border-radius:var(--r2);border:1.5px solid var(--border);background:rgba(0,0,0,.25);color:var(--text);font-size:13px;outline:none;transition:all .25s;font-family:inherit}
+.fg input:focus,.fg textarea:focus,.fg select:focus,.form-input:focus,.form-ctrl:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,250,.1)}
+textarea{resize:vertical;min-height:80px}
+.hint{font-size:11px;color:var(--t3);margin-top:6px}
+.form-label{font-size:12px;color:var(--t2);margin-bottom:6px;display:block;font-weight:500}
+.search-input{width:100%;padding:10px 14px;border-radius:var(--r2);border:1.5px solid var(--border);background:rgba(0,0,0,.25);color:var(--text);font-size:13px;outline:none;transition:all .25s}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,250,.08)}
+
+/* ── Toggle Switch ── */
+.switch{position:relative;display:inline-block;width:42px;height:24px;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:rgba(255,255,255,.12);border-radius:24px;transition:all .3s}
+.slider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .3s var(--spring)}
+.switch input:checked+.slider{background:var(--blue)}
+.switch input:checked+.slider::before{transform:translateX(18px)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.t-label{font-size:13px;font-weight:600}
+.t-desc{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* ── Tab Panes ── */
+.tab-pane{display:none;animation:fadeSlideIn .35s ease}
+.tab-pane.active{display:block}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.tab-bar{display:none;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:8px 14px;border-radius:var(--r2);border:1px solid var(--border);background:var(--glass);color:var(--t2);font-size:12px;cursor:pointer;transition:all .2s;font-weight:500}
+.tab:hover{background:var(--glass2);color:var(--text)}
+.tab.active{background:rgba(79,142,250,.1);color:var(--blue);border-color:rgba(79,142,250,.22)}
+
+/* ── Bot Card ── */
+.bot-card{display:flex;align-items:center;gap:14px;padding:18px 20px;margin-bottom:14px;background:linear-gradient(135deg,rgba(79,142,250,.06),rgba(192,132,252,.04));border:1px solid rgba(79,142,250,.12);border-radius:var(--r)}
+.bot-av{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,rgba(79,142,250,.2),rgba(192,132,252,.2));border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.bot-av img{width:100%;height:100%;object-fit:cover}
+.bot-name{font-size:18px;font-weight:800}
+.bot-sub{font-size:12px;color:var(--t2)}
+.bot-uid{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* ═══ COMMANDS ═══ */
+.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.cmd-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--r2);padding:14px;transition:all .3s var(--spring);animation:cardIn .4s var(--spring) backwards;position:relative;overflow:hidden}
+.cmd-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,.22)}
+.cn{font-size:14px;font-weight:700;margin-bottom:4px}
+.cc{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.cd{font-size:12px;color:var(--t2);line-height:1.4;margin-bottom:8px}
+.c-aliases{font-size:11px;color:var(--cyan);margin-bottom:6px}
+.cmd-badge{font-size:10px;padding:3px 8px;border-radius:12px;font-weight:600}
+.role-0{background:rgba(52,211,153,.1);color:var(--green)}
+.role-2{background:rgba(79,142,250,.1);color:var(--blue)}
+.role-3{background:rgba(251,191,36,.1);color:var(--yellow)}
+.cmd-ver{position:absolute;top:10px;left:10px;font-size:10px;color:var(--t3);background:var(--glass);padding:2px 6px;border-radius:6px}
+.c-acts{display:flex;gap:6px;margin-top:8px}
+.cat-filter{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.cat-btn{padding:5px 10px;border-radius:var(--r3);border:1px solid var(--border);background:var(--glass);color:var(--t2);font-size:11px;cursor:pointer;transition:all .2s}
+.cat-btn.active{background:rgba(79,142,250,.1);color:var(--blue);border-color:rgba(79,142,250,.25)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--t3)}
+.es-icon{font-size:40px;margin-bottom:10px}
+
+/* ═══ MESSENGER ═══ */
+.messenger-wrap{display:flex;height:calc(100vh - 130px);min-height:400px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--glass)}
+.messenger-sidebar{width:320px;border-left:1px solid var(--border);display:flex;flex-direction:column;background:rgba(16,22,40,.5);flex-shrink:0}
+.messenger-sidebar-hdr{padding:12px;border-bottom:1px solid var(--border)}
+.sidebar-tab-btns{display:flex;gap:4px}
+.sidebar-tab-btn{padding:6px 12px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--t2);font-size:12px;cursor:pointer;transition:all .2s;position:relative}
+.sidebar-tab-btn.active{background:rgba(79,142,250,.1);color:var(--blue);border-color:rgba(79,142,250,.22)}
+.req-badge{position:absolute;top:-4px;left:-4px;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700}
+.req-badge.hidden{display:none}
+.msg-search{width:100%;padding:8px 12px;border-radius:var(--r2);border:1.5px solid var(--border);background:rgba(0,0,0,.2);color:var(--text);font-size:12px;outline:none;margin-top:8px;transition:all .2s}
+.msg-search:focus{border-color:var(--blue)}
+.thread-list{flex:1;overflow-y:auto;padding:6px}
+.thread-list-empty{text-align:center;padding:30px;color:var(--t3);font-size:12px}
+.thread-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r2);cursor:pointer;transition:all .2s;border:1px solid transparent}
+.thread-item:hover{background:var(--glass2)}
+.thread-item.active{background:rgba(79,142,250,.08);border-color:rgba(79,142,250,.18)}
+.thread-av{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,rgba(79,142,250,.15),rgba(192,132,252,.15));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;overflow:hidden}
+.thread-info{flex:1;min-width:0}
+.thread-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thread-last{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.thread-time{font-size:10px;color:var(--t3);flex-shrink:0}
+.thread-badge{background:var(--blue);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:700;flex-shrink:0}
+
+.messenger-chat{flex:1;display:flex;flex-direction:column;min-width:0}
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t3);gap:8px}
+.big-icon{font-size:48px;opacity:.3}
+.chat-header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(16,22,40,.4)}
+.chat-hdr-btn{width:32px;height:32px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.chat-hdr-btn:hover{background:var(--glass2);color:var(--text)}
+.chat-hdr-btn.active{background:rgba(79,142,250,.12);color:var(--blue)}
+.chat-hdr-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(79,142,250,.25),rgba(192,132,252,.25));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;overflow:hidden}
+.chat-hdr-info{flex:1;min-width:0}
+.chat-hdr-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-hdr-meta{font-size:11px;color:var(--t3)}
+.chat-hdr-actions{display:flex;gap:6px}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.msg-bubble-wrap{display:flex;gap:8px;max-width:85%;animation:msgIn .3s var(--spring)}
+.msg-bubble-wrap.from-bot{flex-direction:row-reverse;margin-right:auto;margin-left:0}
+.msg-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--glass3),var(--glass2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.msg-sender-name{font-size:11px;color:var(--t3);margin-bottom:2px;font-weight:600}
+.msg-bubble{background:var(--glass2);border:1px solid var(--border);border-radius:14px 14px 14px 4px;padding:10px 14px;font-size:13px;line-height:1.5;word-break:break-word}
+.from-bot .msg-bubble{background:rgba(79,142,250,.1);border-color:rgba(79,142,250,.12);border-radius:14px 14px 4px 14px}
+.msg-text{margin:0}
+.msg-time{font-size:10px;color:var(--t3);margin-top:4px}
+.msg-image{max-width:220px;border-radius:var(--r2);margin-top:6px;cursor:pointer}
+.msg-video{max-width:280px;border-radius:var(--r2);margin-top:6px}
+.msg-audio{max-width:240px;margin-top:6px}
+.msg-attachment{font-size:12px;color:var(--cyan);margin-top:4px}
+.msg-system{text-align:center;color:var(--t3);font-size:12px;padding:20px}
+.chat-date-sep{text-align:center;font-size:11px;color:var(--t3);padding:8px 0}
+.chat-date-sep span{background:var(--glass);padding:4px 14px;border-radius:12px;border:1px solid var(--border)}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.chat-input-area{border-top:1px solid var(--border);padding:10px 12px}
+.silent-banner{background:rgba(251,191,36,.08);color:var(--yellow);text-align:center;padding:6px;border-radius:var(--r2);font-size:11px;margin-bottom:8px;border:1px solid rgba(251,191,36,.15)}
+.silent-banner.hidden{display:none}
+.file-preview-area{margin-bottom:8px}
+.file-preview-area.hidden{display:none}
+.recording-indicator{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.15);border-radius:var(--r2);margin-bottom:8px;color:var(--red);font-size:12px}
+.recording-indicator.hidden{display:none}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1s infinite}
+.file-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--glass2);border:1px solid var(--border);border-radius:var(--r2);font-size:12px}
+.file-chip-rm{border:none;background:transparent;color:var(--red);cursor:pointer;font-size:14px}
+.input-row{display:flex;align-items:flex-end;gap:8px}
+.input-actions{display:flex;gap:4px}
+.ia-btn{width:36px;height:36px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.ia-btn:hover{background:var(--glass2);color:var(--text)}
+.ia-btn.silent-on{color:var(--yellow);background:rgba(251,191,36,.08)}
+.ia-btn.recording{color:var(--red);background:rgba(248,113,113,.08)}
+.chat-input-wrap{flex:1}
+.chat-input{width:100%;padding:10px 14px;border-radius:var(--r2);border:1.5px solid var(--border);background:rgba(0,0,0,.25);color:var(--text);font-size:13px;outline:none;resize:none;max-height:120px;font-family:inherit;transition:all .2s}
+.chat-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,250,.08)}
+.send-btn{width:40px;height:40px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s var(--spring);flex-shrink:0}
+.send-btn:hover{transform:scale(1.08);box-shadow:0 4px 16px rgba(79,142,250,.3)}
+.send-btn:disabled{opacity:.4;transform:none}
+
+/* ── Group Info Panel ── */
+.group-info-panel{width:300px;border-right:1px solid var(--border);background:rgba(16,22,40,.5);overflow-y:auto;flex-shrink:0}
+.group-info-panel.hidden{display:none}
+.gip-hdr{padding:12px 16px;border-bottom:1px solid var(--border)}
+.gip-title{font-size:14px;font-weight:700}
+.gip-section{padding:12px 16px;border-bottom:1px solid var(--border)}
+.gip-section-title{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:600}
+.gip-avatar{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,rgba(79,142,250,.15),rgba(192,132,252,.15));border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;cursor:pointer;overflow:hidden;transition:transform .2s var(--spring)}
+.gip-avatar:hover{transform:scale(1.05)}
+.gip-av-img{width:100%;height:100%;object-fit:cover}
+.gip-name-display{font-size:14px;font-weight:700;text-align:center}
+.gip-meta-display{font-size:11px;color:var(--t3);text-align:center;margin-top:2px}
+.gip-input{flex:1;padding:8px 12px;border-radius:var(--r2);border:1.5px solid var(--border);background:rgba(0,0,0,.25);color:var(--text);font-size:12px;outline:none}
+.gip-member{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.gip-member:last-child{border-bottom:none}
+.gip-member-av{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(79,142,250,.15),rgba(192,132,252,.15));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.gip-member-info{flex:1;min-width:0}
+.gip-member-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gip-member-nick{font-size:10px;color:var(--t3)}
+.gip-uid-copy{font-size:10px;color:var(--cyan);cursor:pointer;font-family:monospace}
+.gip-member-actions{display:flex;gap:4px}
+.gip-action-btn{width:26px;height:26px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s}
+.gip-kick-btn:hover{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.25)}
+
+/* ═══ PROTECTION ═══ */
+.prot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.prot-pill{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r2);font-size:12px;font-weight:500;animation:cardIn .3s var(--spring) backwards;transition:all .2s}
+.prot-pill:hover{border-color:var(--border2);transform:translateY(-1px)}
+.prot-pill .p-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+
+/* ═══ EDITOR ═══ */
+.editor-panel{display:none}
+.editor-panel.active{display:block}
+.editor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.editor-name{font-size:15px;font-weight:700;color:var(--blue)}
+.code{width:100%;min-height:350px;padding:14px;border-radius:var(--r2);border:1.5px solid var(--border);background:rgba(0,0,0,.4);color:#d4d4d4;font-family:'SF Mono','Fira Code',monospace;font-size:13px;line-height:1.6;outline:none;resize:vertical;tab-size:2;direction:ltr;text-align:left}
+.code:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,250,.08)}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+
+/* ═══ SETTINGS ═══ */
+.settings-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.settings-section:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0}
+.settings-section-title{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--t2)}
+
+/* ═══ LOGS ═══ */
+.log-controls{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.log-box{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:var(--r2);padding:12px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:1.7;max-height:500px;overflow-y:auto;color:#d4d4d4}
+.log-line{display:block;white-space:pre-wrap;word-break:break-all}
+.log-ts{color:var(--t3);margin-left:8px;font-size:10px}
+
+/* ═══ MESSAGES ═══ */
+.msg-log{max-height:400px;overflow-y:auto}
+.msg-item{padding:10px 14px;border-bottom:1px solid var(--border);transition:background .2s}
+.msg-item:hover{background:var(--glass)}
+.msg-body{font-size:13px;line-height:1.4}
+.msg-meta{font-size:10px;color:var(--t3);margin-top:4px}
+
+/* ═══ ACTIVATION ═══ */
+.act-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-bottom:12px}
+.act-card{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r2);transition:all .2s}
+.act-card.disabled-cmd{opacity:.5}
+.ac-name{font-size:13px;font-weight:600}
+.ac-cat{font-size:10px;color:var(--t3)}
+.mode-pill{padding:8px 14px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--t2);font-size:12px;cursor:pointer;transition:all .2s}
+.mode-pill.active-bl{background:rgba(248,113,113,.08);color:var(--red);border-color:rgba(248,113,113,.25)}
+.mode-pill.active-wl{background:rgba(52,211,153,.08);color:var(--green);border-color:rgba(52,211,153,.25)}
+.act-save-bar{display:flex;align-items:center;gap:10px;margin-top:12px}
+.thread-selector{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.thread-mode-pills{display:flex;gap:6px}
+.thread-info-pill{font-size:12px;color:var(--t2);padding:6px 12px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r2)}
+
+/* ═══ AI ═══ */
+.ai-loading{display:flex;align-items:center;gap:6px;padding:14px 0}
+.ai-loading.hidden{display:none}
+.ai-loading-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:aiDot 1.2s infinite ease-in-out}
+.ai-loading-dot:nth-child(2){animation-delay:.2s}
+.ai-loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes aiDot{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:1;transform:scale(1)}}
+.ai-code-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.ai-code-pre{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:var(--r2);padding:14px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:1.6;overflow-x:auto;color:#d4d4d4;direction:ltr;text-align:left;max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.ai-chat-msgs{max-height:300px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.ai-chat-bubble{padding:10px 14px;border-radius:var(--r2);font-size:13px;line-height:1.5;max-width:85%}
+.ai-chat-bubble.user{background:rgba(79,142,250,.1);border:1px solid rgba(79,142,250,.12);align-self:flex-start}
+.ai-chat-bubble.ai{background:var(--glass2);border:1px solid var(--border);align-self:flex-end}
+.ai-ctx-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ai-ctx-chip{padding:5px 10px;border-radius:var(--r3);border:1px solid var(--border);background:var(--glass);font-size:11px;color:var(--t2);cursor:pointer;transition:all .2s}
+.ai-ctx-chip.selected{background:rgba(79,142,250,.1);border-color:rgba(79,142,250,.25);color:var(--blue)}
+.ai-ctx-chip-rm{border:none;background:transparent;color:var(--red);cursor:pointer;margin-right:4px}
+
+/* ═══ FILES ═══ */
+.files-layout{display:flex;height:calc(100vh - 160px);min-height:400px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.files-sidebar{width:260px;border-left:1px solid var(--border);display:flex;flex-direction:column;background:rgba(16,22,40,.5);flex-shrink:0}
+.files-sidebar-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}
+.files-actions-row{display:flex;gap:4px}
+.file-tree{flex:1;overflow-y:auto;padding:6px}
+.ft-dir-label{padding:6px 10px;border-radius:var(--r2);cursor:pointer;font-size:12px;color:var(--t2);transition:background .2s}
+.ft-dir-label:hover{background:var(--glass2)}
+.ft-dir-children{padding-right:12px}
+.ft-file{padding:6px 10px;border-radius:var(--r2);cursor:pointer;font-size:12px;color:var(--t2);transition:all .2s;border:1px solid transparent}
+.ft-file:hover{background:var(--glass2)}
+.ft-file.active{background:rgba(79,142,250,.08);border-color:rgba(79,142,250,.18);color:var(--blue)}
+.files-editor{flex:1;display:flex;flex-direction:column;min-width:0}
+.files-editor-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.files-editor-ta{flex:1;width:100%;padding:14px;border:none;background:rgba(0,0,0,.3);color:#d4d4d4;font-family:'SF Mono','Fira Code',monospace;font-size:13px;line-height:1.6;outline:none;resize:none;direction:ltr;text-align:left}
+
+/* ═══ RAILWAY ═══ */
+.mode-selector{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px}
+.mode-card{padding:16px;border-radius:var(--r2);border:1px solid var(--border);background:var(--glass);cursor:pointer;transition:all .3s var(--spring);text-align:center}
+.mode-card:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 8px 25px rgba(0,0,0,.2)}
+.mode-card.active-rail{background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.25)}
+.mode-card.active-phone{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25)}
+.mc-icon{font-size:28px;margin-bottom:6px}
+.mc-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.mc-desc{font-size:11px;color:var(--t3)}
+.push-log{max-height:200px;overflow-y:auto;font-family:'SF Mono','Fira Code',monospace;font-size:11px;display:none;margin-top:10px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--r2);padding:10px}
+.push-log.visible{display:block}
+.pll{display:block;padding:2px 0;white-space:pre-wrap;word-break:break-all}
+.pll.ok{color:var(--green)}
+.pll.err{color:var(--red)}
+.step-guide{display:flex;flex-direction:column;gap:12px}
+.step-item{display:flex;gap:12px;align-items:flex-start}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.step-content{flex:1}
+.step-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.step-code{font-family:monospace;font-size:12px;color:var(--cyan);background:rgba(34,211,238,.06);padding:3px 8px;border-radius:6px;cursor:pointer;display:inline-block;border:1px solid rgba(34,211,238,.12)}
+.terminal-widget{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:12px}
+.tw-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+.tw-dot{width:10px;height:10px;border-radius:50%}
+.tw-r{background:#ff5f57}
+.tw-y{background:#febc2e}
+.tw-g{background:#28c840}
+.tw-title{font-size:12px;color:var(--t2);margin-right:auto}
+.tw-body{padding:14px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:1.8;color:#d4d4d4;white-space:pre-wrap;direction:ltr;text-align:left}
+.tw-dim{color:var(--t3)}
+.tw-cmd{color:var(--green)}
+.tw-out{color:var(--cyan)}
+.dep-status{font-size:12px;font-weight:600;padding:3px 10px;border-radius:8px}
+.dep-ok{background:rgba(52,211,153,.1);color:var(--green)}
+.dep-fail{background:rgba(248,113,113,.1);color:var(--red)}
+.dep-building{background:rgba(251,191,36,.1);color:var(--yellow)}
+.dep-idle{background:var(--glass);color:var(--t2)}
+.rlw-status-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.rlw-srl{color:var(--t3);font-weight:500}
+.rlw-srr{color:var(--text)}
+
+/* ═══ ADDLOCK ═══ */
+.toggle-wrap{cursor:pointer}
+.toggle-track{width:44px;height:24px;border-radius:12px;background:rgba(255,255,255,.12);position:relative;transition:background .3s}
+.toggle-track.on{background:var(--blue)}
+.toggle-thumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:transform .3s var(--spring)}
+.toggle-track.on .toggle-thumb{transform:translateX(20px)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .main-sidebar{display:none}
+  .bottom-nav{display:block}
+  .main{padding-bottom:calc(var(--nav-h) + var(--safe-b) + 20px)}
+  .messenger-wrap{height:calc(100vh - 180px)}
+  .messenger-sidebar{width:100%}
+  .messenger-sidebar.hidden-mobile{display:none}
+  .messenger-chat.hidden-mobile{display:none}
+  .messenger-chat{display:flex !important}
+  .group-info-panel{position:absolute;right:0;top:0;bottom:0;width:280px;z-index:10;background:var(--bg2)}
+  .files-layout{flex-direction:column;height:auto}
+  .files-sidebar{width:100%;max-height:200px}
+  .files-editor{min-height:300px}
+  .cmd-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  .hdr{padding:10px 12px}
+  .main{padding:10px 10px calc(var(--nav-h) + var(--safe-b) + 16px)}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:6px}
+  .stat{padding:12px 8px}
+  .stat-v{font-size:22px}
+  .cmd-grid{grid-template-columns:1fr}
+  .prot-grid{grid-template-columns:repeat(2,1fr)}
+  .card{padding:14px}
+  .mode-selector{grid-template-columns:1fr}
+  .act-grid{grid-template-columns:1fr}
+}
+@media(min-width:901px){
+  .tab-bar{display:flex}
+  .bn{display:none}
+}
+
+/* ═══ MISC ═══ */
+.hidden{display:none !important}
+.admin-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r2);font-size:12px;font-family:monospace}
+.admin-tag-rm{border:none;background:transparent;color:var(--red);cursor:pointer;font-size:14px}
+.req-item{padding:12px;border-bottom:1px solid var(--border)}
+.req-item-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.req-item-av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(79,142,250,.15),rgba(192,132,252,.15));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;overflow:hidden}
+.req-item-info{flex:1;min-width:0}
+.req-item-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.req-item-snippet{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.req-item-actions{display:flex;gap:6px}
+.req-accept-btn,.req-view-btn,.req-ignore-btn{padding:5px 10px;border-radius:var(--r2);border:1px solid var(--border);font-size:11px;cursor:pointer;transition:all .2s;background:transparent;color:var(--t2)}
+.req-accept-btn{background:rgba(52,211,153,.08);color:var(--green);border-color:rgba(52,211,153,.2)}
+.req-ignore-btn{color:var(--red)}
+
+/* ── Hide old Angel branding ── */
+img.angel-logo,.angel-bot-av,.angel-icon-sm,.bg-angel-layer,.bg-tab-tint,.bg-particle,.swipe-hint{display:none !important}
+</style>
+</head>
+<body>
+<div class="bg-canvas" aria-hidden="true">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
+
+<div id="login-screen">
+  <div class="lc">
+    <div class="angel-av">
+      <img src="/angel.png" alt="CAVOR" onerror="this.parentElement.innerHTML='<span style=font-size:28px;font-weight:900>C</span>'">
+    </div>
+    <h2>Cavor-Xv3-11/x</h2>
+    <p>Secure Dashboard</p>
+    <input id="pwd-input" type="password" placeholder="كلمة السر" autocomplete="current-password">
+    <button class="lc-btn" onclick="doLogin()">دخول</button>
+    <div class="lc-err" id="login-err"></div>
+  </div>
+</div>
+
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-icon">
+      <img src="/angel.png" alt="" onerror="this.outerHTML='<span style=font-size:18px;font-weight:900>C</span>'">
+    </div>
+    <div>
+      <div class="hdr-title">Cavor-Xv3-11/x</div>
+      <div class="hdr-sub" id="botStatus2">جاري التحميل…</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="status-pill offline" id="statusPill">
+      <div class="status-dot"></div>
+      <span id="statusText">غير متصل</span>
+    </div>
+    <button class="logout-btn" onclick="logout()">خروج</button>
+  </div>
+</header>
+
+<div class="app-layout">
+<nav class="main-sidebar" id="mainSidebar">
+  <div class="nav-item active" data-tab="control" onclick="switchTab('control')"><span class="nav-ic">🏠</span>الرئيسية</div>
+  <div class="nav-item" data-tab="messenger" onclick="switchTab('messenger')"><span class="nav-ic">💬</span>مسنجر</div>
+  <div class="nav-item" data-tab="commands" onclick="switchTab('commands')"><span class="nav-ic">📦</span>أوامر</div>
+  <div class="nav-sep"></div>
+  <div class="nav-item" data-tab="cookies" onclick="switchTab('cookies')"><span class="nav-ic">🍪</span>كوكيز</div>
+  <div class="nav-item" data-tab="activation" onclick="switchTab('activation')"><span class="nav-ic">🎛</span>تفعيل</div>
+  <div class="nav-item" data-tab="editor" onclick="switchTab('editor')"><span class="nav-ic">✏️</span>محرر</div>
+  <div class="nav-item" data-tab="protection" onclick="switchTab('protection')"><span class="nav-ic">🛡</span>حماية</div>
+  <div class="nav-sep"></div>
+  <div class="nav-item" data-tab="settings" onclick="switchTab('settings')"><span class="nav-ic">⚙️</span>إعدادات</div>
+  <div class="nav-item" data-tab="messages" onclick="switchTab('messages')"><span class="nav-ic">📨</span>رسائل</div>
+  <div class="nav-item" data-tab="logs" onclick="switchTab('logs')"><span class="nav-ic">📋</span>سجلات</div>
+  <div class="nav-item" data-tab="ai" onclick="switchTab('ai')"><span class="nav-ic">🤖</span>ذكاء AI</div>
+  <div class="nav-sep"></div>
+  <div class="nav-item" data-tab="files" onclick="switchTab('files')"><span class="nav-ic">📁</span>ملفات</div>
+  <div class="nav-item" data-tab="railway" onclick="switchTab('railway')"><span class="nav-ic">🚀</span>Railway</div>
+  <div class="nav-item" data-tab="addlock" onclick="switchTab('addlock')"><span class="nav-ic">🔒</span>AddLock</div>
+</nav>
+
+<nav class="bottom-nav" id="bottomNav">
+  <div class="bottom-nav-inner">
+    <button class="bn active" data-tab="control"><span class="bn-ic">🏠</span> الرئيسية</button>
+    <button class="bn" data-tab="messenger"><span class="bn-ic">💬</span> مسنجر</button>
+    <button class="bn" data-tab="commands"><span class="bn-ic">📦</span> أوامر</button>
+    <button class="bn" data-tab="activation"><span class="bn-ic">🎛</span> تفعيل</button>
+    <button class="bn" data-tab="editor"><span class="bn-ic">✏️</span> محرر</button>
+    <button class="bn" data-tab="protection"><span class="bn-ic">🛡</span> حماية</button>
+    <button class="bn" data-tab="settings"><span class="bn-ic">⚙️</span> إعدادات</button>
+    <button class="bn" data-tab="cookies"><span class="bn-ic">🍪</span> كوكيز</button>
+    <button class="bn" data-tab="messages"><span class="bn-ic">📨</span> رسائل</button>
+    <button class="bn" data-tab="logs"><span class="bn-ic">📋</span> سجلات</button>
+    <button class="bn" data-tab="ai"><span class="bn-ic">🤖</span> ذكاء</button>
+    <button class="bn" data-tab="files"><span class="bn-ic">📁</span> ملفات</button>
+    <button class="bn" data-tab="railway"><span class="bn-ic">🚀</span> Railway</button>
+    <button class="bn" data-tab="addlock"><span class="bn-ic">🔒</span> AddLock</button>
+  </div>
+</nav>
+
+<div class="main">
+<div class="page-wrap">
+<div class="tab-bar" id="desktopTabBar">
+  <button class="tab active" data-tab="control">🏠 الرئيسية</button>
+  <button class="tab" data-tab="messenger">💬 مسنجر</button>
+  <button class="tab" data-tab="cookies">🍪 كوكيز</button>
+  <button class="tab" data-tab="commands">📦 أوامر</button>
+  <button class="tab" data-tab="activation">🎛 تفعيل</button>
+  <button class="tab" data-tab="editor">✏️ المحرر</button>
+  <button class="tab" data-tab="protection">🛡 الحماية</button>
+  <button class="tab" data-tab="settings">⚙️ الإعدادات</button>
+  <button class="tab" data-tab="messages">📨 الرسائل</button>
+  <button class="tab" data-tab="logs">📋 السجلات</button>
+  <button class="tab" data-tab="ai">🤖 ذكاء AI</button>
+  <button class="tab" data-tab="files">📁 الملفات</button>
+  <button class="tab" data-tab="railway">🚀 Railway</button>
+  <button class="tab" data-tab="addlock">🔒 AddLock</button>
+</div>
+
+<div class="bot-card">
+  <div class="bot-av"><img src="/angel.png" alt="" onerror="this.outerHTML='<span style=font-size:22px;font-weight:900>C</span>'"></div>
+  <div>
+    <div class="bot-name" id="botName">Cavor-Xv3-11/x</div>
+    <div class="bot-sub" id="botStatus">جاري التحميل…</div>
+    <div class="bot-uid" id="botUID"></div>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat s-blue"><div class="stat-ic">💬</div><div class="stat-v" id="s-msg">0</div><div class="stat-l">رسائل</div></div>
+  <div class="stat s-green"><div class="stat-ic">⚡</div><div class="stat-v" id="s-cmd">0</div><div class="stat-l">أوامر</div></div>
+  <div class="stat s-purple"><div class="stat-ic">👥</div><div class="stat-v" id="s-thr">0</div><div class="stat-l">غروبات</div></div>
+  <div class="stat s-yellow"><div class="stat-ic">👤</div><div class="stat-v" id="s-usr">0</div><div class="stat-l">مستخدمون</div></div>
+  <div class="stat s-cyan"><div class="stat-ic">⏱</div><div class="stat-v" id="s-up">—</div><div class="stat-l">وقت التشغيل</div></div>
+  <div class="stat s-orange"><div class="stat-ic">📦</div><div class="stat-v" id="s-ncmd">0</div><div class="stat-l">عدد الأوامر</div></div>
+  <div class="stat s-teal"><div class="stat-ic">🛡</div><div class="stat-v">20</div><div class="stat-l">طبقات الحماية</div></div>
+  <div class="stat s-pink"><div class="stat-ic">💾</div><div class="stat-v" id="s-ram">—</div><div class="stat-l">RAM (MB)</div></div>
+</div>
+
+<div class="tab-pane active" id="tab-control">
+  <div class="card">
+    <div class="card-title">التحكم الرئيسي</div>
+    <div class="btn-row">
+      <button class="btn btn-success" id="btn-restart" onclick="controlBot('restart')">🔄 إعادة تشغيل</button>
+      <button class="btn btn-danger" id="btn-stop" onclick="controlBot('stop')">⏹ إيقاف</button>
+      <button class="btn btn-ghost btn-sm" onclick="refreshStats()">📊 تحديث</button>
+      <button class="btn btn-ghost btn-sm" onclick="pingBot()">🏓 Ping</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">آخر الرسائل</div>
+    <div class="msg-log" id="msgLogControl"><div class="msg-item"><div class="msg-body" style="color:var(--t2)">لا توجد رسائل بعد…</div></div></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-messenger">
+  <div class="messenger-wrap" id="messengerWrap">
+    <div class="messenger-sidebar" id="messengerSidebar">
+      <div class="messenger-sidebar-hdr">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="sidebar-tab-btns">
+            <button class="sidebar-tab-btn active" id="sideTabGroups" onclick="switchSidebarTab('groups')">💬 الغروبات</button>
+            <button class="sidebar-tab-btn" id="sideTabRequests" onclick="switchSidebarTab('requests')">📬 الطلبات<span class="req-badge hidden" id="reqBadge">0</span></button>
+          </div>
+          <button class="chat-hdr-btn" onclick="refreshSidebarTab()">🔄</button>
+        </div>
+        <input class="msg-search" type="text" id="threadSearch" placeholder="🔍 بحث…" oninput="filterThreads()">
+      </div>
+      <div class="thread-list" id="threadList" style="display:flex;flex-direction:column;"><div class="thread-list-empty">🔄 جاري التحميل…</div></div>
+      <div class="thread-list hidden" id="requestList" style="display:none;flex-direction:column;"><div class="thread-list-empty">🔄 جاري التحميل…</div></div>
+    </div>
+    <div class="messenger-chat" id="messengerChat">
+      <div class="chat-empty" id="chatEmpty"><div class="big-icon">💬</div><p>اختر غروباً للبدء</p><p style="font-size:11px;color:var(--t3);">يظهر الغروب بعد أول رسالة</p></div>
+      <div id="chatActive" style="display:none;flex-direction:column;height:100%;">
+        <div class="chat-header">
+          <button class="chat-hdr-btn" id="btnBackThreads" onclick="closeChatMobile()">←</button>
+          <div class="chat-hdr-av" id="chatHdrAv">G</div>
+          <div class="chat-hdr-info"><div class="chat-hdr-name" id="chatHdrName">—</div><div class="chat-hdr-meta" id="chatHdrMeta"></div></div>
+          <div class="chat-hdr-actions"><button class="chat-hdr-btn" id="btnGroupInfo" onclick="toggleGroupInfo()">ℹ️</button><button class="chat-hdr-btn" onclick="loadThreadInfo()">🔄</button></div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+          <div class="silent-banner hidden" id="silentBanner">🔕 رسالة صامتة</div>
+          <div class="file-preview-area hidden" id="filePreviewArea"></div>
+          <div class="recording-indicator hidden" id="recordingIndicator"><div class="rec-dot"></div><span>جاري التسجيل…</span><button class="btn btn-danger btn-xs" onclick="stopRecording()" style="margin-right:auto;">إيقاف</button></div>
+          <div class="input-row">
+            <div class="input-actions">
+              <input type="file" id="fileInput" style="display:none" accept="image/*,audio/*,video/*,.pdf,.doc,.docx">
+              <button class="ia-btn" onclick="document.getElementById('fileInput').click()">📎</button>
+              <button class="ia-btn" id="btnRecord" onclick="toggleRecording()">🎙</button>
+              <button class="ia-btn" id="btnSilent" onclick="toggleSilent()">🔔</button>
+            </div>
+            <div class="chat-input-wrap"><textarea class="chat-input" id="msgInput" placeholder="اكتب رسالة…" rows="1" oninput="autoResizeInput(this)" onkeydown="handleMsgKeydown(event)"></textarea></div>
+            <button class="send-btn" id="btnSend" onclick="sendChatMessage()">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="group-info-panel hidden" id="groupInfoPanel">
+      <div class="gip-hdr"><div style="display:flex;align-items:center;justify-content:space-between;"><div class="gip-title">معلومات الغروب</div><button class="chat-hdr-btn" onclick="toggleGroupInfo()">✕</button></div></div>
+      <div class="gip-section" style="text-align:center;">
+        <div class="gip-avatar" id="gipAvatar" onclick="changeGroupImage()"><img src="" id="gipAvatarImg" class="gip-av-img" style="display:none"><span id="gipAvatarLetter">G</span></div>
+        <div class="gip-name-display" id="gipNameDisplay">—</div>
+        <div class="gip-meta-display" id="gipMetaDisplay"></div>
+      </div>
+      <div class="gip-section"><div class="gip-section-title">تغيير اسم الغروب</div><div style="display:flex;gap:6px;"><input class="gip-input" type="text" id="gipNewName" placeholder="الاسم الجديد"><button class="btn btn-primary btn-xs" onclick="setGroupTitle()">تغيير</button></div></div>
+      <div class="gip-section"><div class="gip-section-title">إرسال رسالة للجميع</div><div style="display:flex;gap:6px;"><input class="gip-input" type="text" id="gipBroadcastMsg" placeholder="اكتب رسالة…"><button class="btn btn-purple btn-xs" onclick="sendBroadcast()">إرسال</button></div></div>
+      <div class="gip-section"><div class="gip-section-title">الأعضاء (<span id="gipMemberCount">0</span>)</div><div id="gipMemberList" style="max-height:280px;overflow-y:auto;"></div></div>
+      <div class="gip-section"><div class="gip-section-title">إضافة عضو</div><div style="display:flex;gap:6px;"><input class="gip-input" type="text" id="gipAddUID" placeholder="Facebook UID"><button class="btn btn-success btn-xs" onclick="addMemberToGroup()">+ إضافة</button></div></div>
+    </div>
+  </div>
+</div>
+
+  <div class="card">
+    <div class="card-title">🔍 حالة الكوكيز</div>
+    <div id="cookie-status-display" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px;">
+      <div class="stat s-blue"><div class="stat-ic">🔐</div><div class="stat-v" id="ck-status">—</div><div class="stat-l">الحالة</div></div>
+      <div class="stat s-green"><div class="stat-ic">✅</div><div class="stat-v" id="ck-successes">0</div><div class="stat-l">تجديد ناجح</div></div>
+      <div class="stat s-red"><div class="stat-ic">❌</div><div class="stat-v" id="ck-failures">0</div><div class="stat-l">تجديد فاشل</div></div>
+      <div class="stat s-cyan"><div class="stat-ic">⏱</div><div class="stat-v" id="ck-remaining">—</div><div class="stat-l">الوقت المتبقي</div></div>
+      <div class="stat s-purple"><div class="stat-ic">🕐</div><div class="stat-v" id="ck-last-success">—</div><div class="stat-l">آخر تجديد ناجح</div></div>
+      <div class="stat s-yellow"><div class="stat-ic">📡</div><div class="stat-v" id="ck-last-attempt">—</div><div class="stat-l">آخر محاولة</div></div>
+    </div>
+    <div id="ck-failure-reason" style="display:none;padding:10px 14px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:var(--r2);font-size:12px;color:var(--red);margin-bottom:14px;"></div>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn btn-primary" id="btn-renew-cookie" onclick="renewCookieNow()">🔄 تجديد الآن</button>
+      <button class="btn btn-ghost" onclick="loadCookieStats()">🔄 تحديث الإحصائيات</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🍪 رفع الكوكيز</div>
+    <div class="fg"><label>الكوكيز — JSON / c3c / Netscape / Header String</label><textarea id="cookieInput" rows="7" placeholder='[{"key":"c_user","value":"..."},{"key":"xs","value":"..."}]'></textarea><div class="hint">✅ يدعم JSON Array، c3c، Netscape، وصيغة key=value</div></div>
+    <div class="btn-row"><button class="btn btn-primary" id="btn-upload-cookies" onclick="uploadCookies()">📤 رفع وتسجيل الدخول</button><button class="btn btn-ghost" onclick="document.getElementById('cookieInput').value=''">🗑 مسح</button></div>
+  </div>
+</div>
+
+    <div class="fg"><label>الكوكيز — JSON / c3c / Netscape / Header String</label><textarea id="cookieInput" rows="7" placeholder='[{"key":"c_user","value":"..."},{"key":"xs","value":"..."}]'></textarea><div class="hint">✅ يدعم JSON Array، c3c، Netscape، وصيغة key=value</div></div>
+    <div class="btn-row"><button class="btn btn-primary" id="btn-upload-cookies" onclick="uploadCookies()">📤 رفع وتسجيل الدخول</button><button class="btn btn-ghost" onclick="document.getElementById('cookieInput').value=''">🗑 مسح</button></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-commands">
+  <div class="card">
+    <div class="card-title">📦 قائمة الأوامر — <span id="cmdTotal">0</span> أمر</div>
+    <div class="search-bar"><input class="search-input" id="cmd-search" type="text" placeholder="🔍 بحث في الأوامر…" oninput="filterCommands()"></div>
+    <div class="cat-filter" id="cat-filter"></div>
+    <div class="cmd-grid" id="cmdGrid" style="margin-top:12px;"><div class="empty-state"><div class="es-icon">📦</div><p>جاري التحميل…</p></div></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-activation">
+  <div class="card">
+    <div class="card-title">🎛 تفعيل / تعطيل الأوامر لكل غروب</div>
+    <p style="font-size:12px;color:var(--t2);margin-bottom:14px;">البلاك‌ليست تعطّل المحدد، والوايت‌ليست تُفعّل المحدد فقط.</p>
+    <div class="thread-selector">
+      <div class="fg"><label>Thread ID أو اختر من القائمة</label><div style="display:flex;gap:6px;"><input type="text" id="act-tid" placeholder="Thread ID" style="flex:1;"><button class="btn btn-ghost btn-sm" onclick="loadThreadsForAct()">📋 قائمة</button></div></div>
+      <button class="btn btn-primary btn-sm" style="margin-bottom:0;align-self:flex-end;" onclick="loadActConfig()">تحميل</button>
+    </div>
+    <div id="threads-list-act" style="display:none;margin-bottom:12px;"></div>
+    <div id="act-content" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+        <div class="thread-info-pill"><b>الغروب:</b> <span id="act-tid-display">—</span></div>
+        <div class="thread-mode-pills"><button class="mode-pill" id="mode-bl" onclick="setActMode('blacklist')">⛔ تعطيل المحدد</button><button class="mode-pill" id="mode-wl" onclick="setActMode('whitelist')">✅ تفعيل المحدد فقط</button></div>
+      </div>
+      <div style="margin-bottom:8px;font-size:12px;color:var(--t2);" id="act-mode-hint"></div>
+      <div class="act-grid" id="actGrid"></div>
+      <div class="act-save-bar"><button class="btn btn-primary" onclick="saveActConfig()">💾 حفظ</button><button class="btn btn-danger btn-sm" onclick="resetActConfig()">🗑 إعادة تعيين</button><span style="font-size:11px;color:var(--t2);" id="act-save-hint"></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-editor">
+  <div class="card"><div class="card-title">✏️ محرر الأوامر — Hot Reload</div>
+    <div class="fg"><label>اختر الأمر</label><select id="editor-select" onchange="onEditorSelectChange()"><option value="">— اختر أمراً —</option></select></div>
+  </div>
+  <div class="editor-panel card" id="editor-meta-panel">
+    <div class="card-title">⚡ تعديل سريع للمعلومات</div>
+    <div class="meta-grid">
+      <div class="fg"><label>اسم الأمر الجديد</label><input type="text" id="meta-name" placeholder="مثل: groupimage"></div>
+      <div class="fg"><label>الوصف</label><input type="text" id="meta-desc" placeholder="وصف مختصر"></div>
+      <div class="fg"><label>الاختصارات</label><input type="text" id="meta-aliases" placeholder="img, صورة"></div>
+      <div class="fg"><label>مستوى الصلاحية</label><select id="meta-role"><option value="0">👤 الجميع (0)</option><option value="2" selected>🔑 أدمن (2)</option><option value="3">👑 مالك (3)</option></select></div>
+    </div>
+    <div class="fg"><label>طريقة الاستخدام</label><input type="text" id="meta-guide" placeholder="{pn} [نص]"></div>
+    <div class="btn-row"><button class="btn btn-warn btn-sm" id="btn-save-meta" onclick="saveCmdMeta()">⚡ تطبيق</button><span style="font-size:11px;color:var(--t2);" id="meta-hint"></span></div>
+  </div>
+  <div class="editor-panel card" id="editor-panel">
+    <div class="editor-header"><div class="editor-name" id="editor-cmd-name">—</div><div class="btn-row"><button class="btn btn-sm btn-ghost" onclick="reloadCmdSource()">↩ إعادة تحميل</button><button class="btn btn-sm btn-primary" id="btn-save-cmd" onclick="saveCmdSource()">💾 حفظ وتطبيق</button></div></div>
+    <textarea class="code" id="editor-code" placeholder="// كود الأمر هنا"></textarea>
+    <div class="hint" id="editor-hint"></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-protection"><div class="card"><div class="card-title">🛡 20 طبقة حماية — جميعها نشطة</div><div class="prot-grid" id="protGrid"></div></div></div>
+
+<div class="tab-pane" id="tab-settings">
+  <div class="card">
+    <div class="card-title">⚙️ الإعدادات العامة</div>
+    <div class="settings-section">
+      <div class="settings-section-title">معلومات البوت</div>
+      <div class="fg"><label>اسم البوت</label><input type="text" id="cfg-botName" value="Cavor-Xv3-11/x"></div>
+      <div class="fg"><label>Prefix</label><input type="text" id="cfg-prefix" value="/" maxlength="3"></div>
+      <div class="fg"><label>كلمة سر لوحة التحكم</label><input type="password" id="cfg-dashpwd" placeholder="اتركه فارغاً للإبقاء على الحالي"></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">أنظمة الحماية</div>
+      <div class="toggle-row"><div><div class="t-label">Stealth Mode</div><div class="t-desc">محاكاة تصفح بشري</div></div><label class="switch"><input type="checkbox" id="cfg-stealth" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><div><div class="t-label">Keep Alive</div><div class="t-desc">ping دوري للحفاظ على الجلسة</div></div><label class="switch"><input type="checkbox" id="cfg-keepalive" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><div><div class="t-label">MQTT Health Check</div><div class="t-desc">إعادة الاتصال تلقائياً</div></div><label class="switch"><input type="checkbox" id="cfg-mqtt" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><div><div class="t-label">وضع الأدمن فقط</div><div class="t-desc">يرد فقط على الأدمن</div></div><label class="switch"><input type="checkbox" id="cfg-adminOnly" checked><span class="slider"></span></label></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="saveSettings()">💾 حفظ</button><button class="btn btn-ghost" onclick="loadSettings()">↩ إعادة تحميل</button></div>
+    <div class="hint" id="settings-hint" style="margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">👑 إدارة الأدمن</div>
+    <div class="settings-section"><div class="settings-section-title">معرّف المالك</div><div class="fg"><label>معرف Facebook</label><input type="text" id="adm-ownerID" placeholder="100012345678"></div></div>
+    <div class="settings-section"><div class="settings-section-title">سوبر أدمن</div><div style="display:flex;gap:6px;margin-bottom:10px;"><input type="text" id="adm-super-input" placeholder="UID" style="flex:1;"><button class="btn btn-primary btn-sm" onclick="addSuperAdmin()">+ إضافة</button></div><div id="adm-super-list" style="display:flex;flex-wrap:wrap;gap:6px;min-height:32px;"></div></div>
+    <div class="settings-section"><div class="settings-section-title">أدمن البوت</div><div style="display:flex;gap:6px;margin-bottom:10px;"><input type="text" id="adm-admin-input" placeholder="UID" style="flex:1;"><button class="btn btn-primary btn-sm" onclick="addAdmin()">+ إضافة</button></div><div id="adm-admin-list" style="display:flex;flex-wrap:wrap;gap:6px;min-height:32px;"></div></div>
+    <div class="btn-row"><button class="btn btn-success" onclick="saveAdmins()">💾 حفظ</button><button class="btn btn-ghost" onclick="loadAdmins()">↩ إعادة تحميل</button></div>
+    <div class="hint" id="adm-hint" style="margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🤖 مفاتيح الذكاء الاصطناعي</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:14px;padding:8px 12px;background:rgba(52,211,153,.05);border-radius:8px;border:1px solid rgba(52,211,153,.15);">✅ <b>تعمل مجاناً بدون أي مفتاح</b></div>
+    <div class="settings-section"><div class="settings-section-title">🟢 Groq</div><div class="fg"><label>GROQ_API_KEY</label><input type="password" id="cfg-groqKey" placeholder="gsk_..."></div></div>
+    <div class="settings-section"><div class="settings-section-title">🟣 Anthropic</div><div class="fg"><label>ANTHROPIC_API_KEY</label><input type="password" id="cfg-anthropicKey" placeholder="sk-ant-..."></div></div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="saveAIKeys()">💾 حفظ</button><a href="https://console.groq.com/keys" target="_blank" class="btn btn-ghost btn-sm">🔗 Groq مجاني</a></div>
+    <div class="hint" id="ai-keys-hint" style="margin-top:8px;"></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-messages">
+  <div class="card"><div class="card-title">📨 آخر الرسائل المستقبلة</div><div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-ghost btn-sm" onclick="loadMessages()">🔄 تحديث</button><button class="btn btn-purple btn-sm" onclick="switchTab('messenger')">💬 فتح المسنجر</button></div><div class="msg-log" id="msgLog"><div class="msg-item"><div class="msg-body" style="color:var(--t2)">لا توجد رسائل بعد…</div></div></div></div>
+</div>
+
+<div class="tab-pane" id="tab-logs">
+  <div class="card"><div class="card-title">📋 السجلات الحية</div>
+    <div class="log-controls"><button class="btn btn-sm btn-ghost" onclick="toggleAutoScroll()" id="btn-autoscroll">🔒 Auto-scroll: تشغيل</button><button class="btn btn-sm btn-ghost" onclick="clearLogs()">🗑 مسح</button><button class="btn btn-sm btn-ghost" onclick="downloadLogs()">⬇ تحميل</button><span style="font-size:11px;color:var(--t2)" id="log-count">0 سطر</span></div>
+    <div class="log-box" id="logBox"></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-ai">
+  <div id="aiProviderBadge" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--glass2);border:1px solid var(--border);border-radius:var(--r2);">
+    <div id="aiProviderIcon" style="font-size:20px">🤖</div>
+    <div style="flex:1"><div style="font-size:12px;color:var(--t3);margin-bottom:2px">مزوّد الذكاء الاصطناعي</div><div id="aiProviderName" style="font-size:13px;font-weight:600;">جاري التحقق…</div></div>
+    <div id="aiProviderTag" style="font-size:10px;padding:3px 8px;border-radius:20px;background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2)">✅ نشط</div>
+  </div>
+  <div class="card"><div class="card-title">✨ توليد أمر بالذكاء الاصطناعي</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:14px;padding:8px 12px;background:rgba(79,142,250,.06);border-radius:8px;border:1px solid rgba(79,142,250,.15);">💡 يعمل <b>مجاناً بدون أي مفتاح</b></div>
+    <label class="form-lbl">📝 وصف الأمر</label>
+    <textarea id="aiDesc" class="form-ctrl" rows="4" placeholder="مثال: أمر يعرض نكتة عشوائية بالعربية" style="resize:vertical;min-height:100px;"></textarea>
+    <div class="ai-ctx-files" id="aiCtxFiles" style="margin-top:10px;"><div style="font-size:11px;color:var(--t3);margin-bottom:6px">ملفات السياق</div><div class="ai-ctx-chips" id="aiCtxChips"></div></div>
+    <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="aiGenerate()">✨ توليد الأمر</button><button class="btn btn-ghost btn-sm" onclick="aiChat()">💬 محادثة</button></div>
+    <div id="aiLoading" class="ai-loading hidden"><div class="ai-loading-dot"></div><div class="ai-loading-dot"></div><div class="ai-loading-dot"></div><span style="font-size:12px;color:var(--t2);margin-right:10px">يتم التوليد…</span></div>
+  </div>
+  <div class="card" id="aiResultCard" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;"><div class="card-title" style="margin:0">📋 الكود المُولَّد</div><div id="aiResultProvider" style="font-size:11px;color:var(--t3);background:var(--glass);padding:3px 8px;border-radius:6px"></div></div>
+    <div class="ai-code-header"><input id="aiCmdName" class="form-ctrl" placeholder="اسم الأمر" style="max-width:200px;font-size:13px" oninput="this.value=this.value.replace(/[^a-z0-9_-]/gi,'').toLowerCase()"><button class="btn btn-success btn-sm" onclick="aiSaveCmd()">💾 حفظ</button><button class="btn btn-ghost btn-sm" onclick="aiCopyCode()">📋 نسخ</button><button class="btn btn-ghost btn-sm" onclick="aiRegenerate()">🔄 إعادة</button></div>
+    <pre class="ai-code-pre" id="aiCodePre"></pre>
+  </div>
+  <div class="card" id="aiChatCard" style="display:none">
+    <div class="card-title">💬 محادثة مع AI</div>
+    <div class="ai-chat-msgs" id="aiChatMsgs"></div>
+    <div class="input-row" style="margin-top:10px"><textarea id="aiChatInput" class="form-ctrl" rows="2" placeholder="اسأل… (Ctrl+Enter)" style="font-size:13px;resize:none" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter')aiSendChat()"></textarea><button class="btn btn-primary" onclick="aiSendChat()" style="flex-shrink:0;min-width:56px">إرسال</button></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-files">
+  <div class="files-layout">
+    <div class="files-sidebar">
+      <div class="files-sidebar-header"><span>📁 الملفات</span><div class="files-actions-row"><button class="ia-btn" onclick="filesNewFile()">+📄</button><button class="ia-btn" onclick="loadFileTree()">🔄</button></div></div>
+      <div class="file-tree" id="fileTree"><div style="color:var(--t3);font-size:12px;padding:20px;text-align:center">جاري التحميل…</div></div>
+    </div>
+    <div class="files-editor">
+      <div class="files-editor-header"><span id="filesEditorPath" style="color:var(--t2);font-size:12px">اختر ملفاً</span><div class="files-actions-row"><button class="btn btn-sm btn-ghost" id="btnAddToAI" style="display:none" onclick="addFileToAICtx()">🤖 AI</button><button class="btn btn-sm btn-success" id="btnSaveFile" style="display:none" onclick="saveCurrentFile()">💾 حفظ</button><button class="btn btn-sm btn-ghost" id="btnDeleteFile" style="display:none" onclick="deleteCurrentFile()">🗑</button></div></div>
+      <textarea id="filesEditor" class="files-editor-ta" placeholder="اختر ملفاً…" disabled></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-railway">
+  <div class="card"><div class="card-title">🔗 وضع الاستضافة</div>
+    <div class="mode-selector"><div class="mode-card active-rail" id="mcard-railway" onclick="setHostMode('railway')"><div class="mc-icon">🚂</div><div class="mc-title">Railway</div><div class="mc-desc">نشر مجاني</div></div><div class="mode-card" id="mcard-replit" onclick="setHostMode('replit')"><div class="mc-icon">🔵</div><div class="mc-title">Replit</div><div class="mc-desc">التشغيل الحالي</div></div><div class="mode-card" id="mcard-phone" onclick="setHostMode('phone')"><div class="mc-icon">📱</div><div class="mc-title">الهاتف</div><div class="mc-desc">تشغيل من هاتفك</div></div></div>
+    <div id="hostModeContent"></div>
+  </div>
+  <div class="card"><div class="card-title">📦 رفع على GitHub</div>
+    <div class="fg"><label class="form-label">🔑 GitHub Token</label><input class="form-input" type="password" id="ghTokenInput" placeholder="ghp_xxxxxxxxxx" oninput="localStorage.setItem('gh_token',this.value)"></div>
+    <div class="fg"><label class="form-label">📁 الملفات</label><select class="form-input" id="ghFilesScope"><option value="all">كل الملفات</option><option value="bot">ملفات البوت</option><option value="apk">ملفات APK</option></select></div>
+    <div class="fg"><label class="form-label">💬 رسالة Commit</label><input class="form-input" type="text" id="ghCommitMsg" value="🤖 Cavor-Xv3-11/x - Auto Update"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" id="btnPushGithub" onclick="pushToGithub()">📤 رفع</button><button class="btn btn-ghost btn-sm" onclick="checkGithubRepo()">🔍 فحص</button></div>
+    <div id="pushLog" class="push-log"></div><div id="repoInfoBox" style="display:none;margin-top:10px;"></div>
+  </div>
+  <div class="card"><div class="card-title">🚂 Railway</div>
+    <div class="fg"><label class="form-label">🔑 API Token</label><input class="form-input" type="password" id="rlwApiToken" oninput="localStorage.setItem('rlw_token',this.value)"></div>
+    <div class="fg"><label class="form-label">🆔 Project ID</label><input class="form-input" type="text" id="rlwProjectId" oninput="localStorage.setItem('rlw_projid',this.value)"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="rlwCheckStatus()">📡 فحص</button><button class="btn btn-ghost btn-sm" onclick="rlwTriggerDeploy()">🚀 Deploy</button></div>
+    <div id="rlwStatusBox" style="margin-top:12px;"></div>
+  </div>
+  <div class="card"><div class="card-title">📖 دليل النشر</div>
+    <div class="step-guide">
+      <div class="step-item"><div class="step-num">1</div><div class="step-content"><div class="step-title">أنشئ حساب Railway</div><div style="font-size:12px;color:var(--t2);">سجّل بـ GitHub على <a href="https://railway.app" target="_blank" style="color:var(--blue)">railway.app</a></div></div></div>
+      <div class="step-item"><div class="step-num">2</div><div class="step-content"><div class="step-title">ارفع الكود على GitHub</div></div></div>
+      <div class="step-item"><div class="step-num">3</div><div class="step-content"><div class="step-title">New Project → Deploy from GitHub</div></div></div>
+      <div class="step-item"><div class="step-num">4</div><div class="step-content"><div class="step-title">أضف Environment Variables</div><div class="step-code" onclick="copyText(this)">NODE_ENV=production</div><br><div class="step-code" onclick="copyText(this)">PORT=3000</div><br><div class="step-code" onclick="copyText(this)">DASHBOARD_PASSWORD=cavor2025</div></div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-title">📱 الهاتف كسيرفر</div>
+    <div class="terminal-widget"><div class="tw-bar"><div class="tw-dot tw-r"></div><div class="tw-dot tw-y"></div><div class="tw-dot tw-g"></div><span class="tw-title">Termux</span></div>
+      <div class="tw-body"><span class="tw-dim"># 1. ثبّت Termux من F-Droid</span>\n<span class="tw-cmd">pkg update && pkg upgrade -y</span>\n<span class="tw-cmd">pkg install nodejs git -y</span>\n<span class="tw-cmd">git clone https://github.com/castrolmocro/divid-apk</span>\n<span class="tw-cmd">cd divid-apk && npm install</span>\n<span class="tw-cmd">node index.js</span></div>
+    </div>
+    <div class="fg"><label class="form-label">🔗 رابط الاتصال</label><div style="display:flex;gap:6px;"><input class="form-input" type="text" id="phoneHostUrl" value="http://localhost:5000" style="flex:1;"><button class="btn btn-ghost btn-sm" onclick="copyText(document.getElementById('phoneHostUrl'))">📋</button></div></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-addlock">
+  <div class="card" style="background:linear-gradient(135deg,rgba(79,142,250,.08),rgba(192,132,252,.06));border:1px solid rgba(79,142,250,.15);">
+    <div style="display:flex;align-items:center;gap:14px;"><div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🔒</div><div><div style="font-size:16px;font-weight:700;margin-bottom:3px;">AddLock</div><div style="font-size:12px;color:var(--t2);">قفل عدد الأعضاء — يُضاف حسابك تلقائياً</div></div></div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;"><input class="form-input" id="addlockSearch" placeholder="🔍 بحث…" oninput="filterAddlockGroups()" style="flex:1;margin:0;"><button class="btn btn-primary" onclick="loadAddlockPage()" style="flex-shrink:0;">🔄 تحديث</button></div>
+  <div id="addlockGroupsList"><div style="text-align:center;padding:40px;color:var(--t3);">⏳ جاري التحميل…</div></div>
+  <div class="card" style="background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);">
+    <div style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:8px;">💡 أوامر AddLock</div>
+    <div style="font-size:11px;color:var(--t2);line-height:1.9;"><code style="color:var(--cyan)">/addlock [id] [رابط]</code> — ضبط<br><code style="color:var(--cyan)">/addlock on</code> — تفعيل | <code style="color:var(--cyan)">/addlock off</code> — إيقاف<br><code style="color:var(--cyan)">/addlock status</code> — الحالة</div>
+  </div>
+</div>
+
+</div></div></div></div>
+<div id="toast-container"></div>
+<script>
+/* ═══════════════════════════════════════════════════
+   Cavor-Xv3-11/x — Dashboard v2.0 — by CAVOR
+   ═══════════════════════════════════════════════════ */
+let _token       = localStorage.getItem("cavor_token") || "";
+let _socket      = null;
+let _autoScroll  = true;
+let _logLines    = [];
+let _allCmds     = [];
+let _activeCat   = "all";
+let _actMode     = "blacklist";
+let _actSelected = new Set();
+let _actTid      = "";
+let _superAdmins = [];
+let _admins      = [];
+let _prevTab     = "control";
+
+/* ─── Messenger State ─────────────────────────────── */
+let _messengerThreads = [];
+let _activeThread     = null;
+let _threadMessages   = {};
+let _silentMode       = false;
+let _mediaRecorder    = null;
+let _recordingChunks  = [];
+let _pendingFile      = null;
+let _unreadCounts     = {};
+
+/* ─── Login ──────────────────────────────────────── */
+async function doLogin() {
+  const pwd = document.getElementById("pwd-input").value.trim();
+  if (!pwd) return;
+  const btn = document.querySelector(".lc-btn");
+  const errEl = document.getElementById("login-err");
+  errEl.textContent = "";
+  btn.disabled = true; btn.textContent = "⏳ جاري…";
+  try {
+    const r = await apiFetch("/api/login", { method:"POST", body:JSON.stringify({ password:pwd }) }, false);
+    btn.disabled = false; btn.textContent = "الدخول";
+    if (r && r.ok) {
+      _token = r.token;
+      localStorage.setItem("cavor_token", _token);
+      const ls = document.getElementById("login-screen");
+      ls.style.animation = "fadeIn .3s ease reverse";
+      setTimeout(() => { ls.classList.add("hidden"); ls.style.animation = ""; }, 280);
+      showApp();
+    } else {
+      errEl.textContent = (r && r.error) ? r.error : "كلمة السر خاطئة";
+    }
+  } catch(e) {
+    btn.disabled = false; btn.textContent = "الدخول";
+    errEl.textContent = "خطأ في الاتصال";
+  }
+}
+document.getElementById("pwd-input").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+
+async function logout() {
+  await apiFetch("/api/logout", { method:"POST" });
+  _token = ""; localStorage.removeItem("cavor_token");
+  if (_socket) { _socket.disconnect(); _socket = null; }
+  document.getElementById("login-screen").classList.remove("hidden");
+}
+async function checkAuth() {
+  if (!_token) return false;
+  const r = await apiFetch("/api/auth-check");
+  return r && r.ok;
+}
+async function showApp() {
+  const ok = await checkAuth();
+  if (!ok) { _token = ""; localStorage.removeItem("cavor_token"); return; }
+  document.getElementById("login-screen").classList.add("hidden");
+  initSocket();
+  await refreshStats();
+  await loadSettings();
+  loadProtections();
+  loadCommandsQuiet();
+}
+
+/* ─── Socket.io ──────────────────────────────────── */
+function initSocket() {
+  if (_socket) _socket.disconnect();
+  _socket = io({ query: { token: _token } });
+  _socket.on("connect",          () => {});
+  _socket.on("disconnect",       () => setStatus("offline","انقطع الاتصال"));
+  _socket.on("bot-status",       d => onBotStatus(d));
+  _socket.on("stats-update",     d => renderStats(d));
+  _socket.on("log-line",         d => addLogLine(d));
+  _socket.on("log-history",      arr => arr.forEach(addLogLine));
+  _socket.on("command-updated",  d => { toast(`✅ /${d.name}`, "success"); refreshCmdsIfOpen(); });
+  _socket.on("config-reloaded",  () => toast("🔄 الإعدادات تحدثت", "success"));
+  _socket.on("pong-bot",         d => toast(`🏓 ${Date.now() - d.ts}ms`, "success"));
+  _socket.on("cookie-stats-update", d => updateCookieStatsUI(d));
+  _socket.on("messenger-msg",    d => onMessengerMsg(d));
+}
+
+/* ─── Status ─────────────────────────────────────── */
+function onBotStatus(d) {
+  const s = d.status || (d.online ? "online" : "offline");
+  setStatus(s, d.message || (s === "online" ? "متصل ✔" : "غير متصل"));
+  if (d.uid)     setText("botUID",  "UID: " + d.uid);
+  if (d.botName) setText("botName", d.botName);
+  if (d.uid && s === "online") setText("botStatus", `متصل ✔ — ${d.botName || "Cavor-Xv3-11/x"}`);
+  else if (s === "connecting") setText("botStatus", "جاري تسجيل الدخول…");
+  else setText("botStatus", d.message || "غير متصل — ارفع الكوكيز");
+}
+function setStatus(s, msg) {
+  const pill = document.getElementById("statusPill");
+  const txt  = document.getElementById("statusText");
+  pill.className = "status-pill " + s;
+  txt.textContent = s === "online" ? "متصل" : s === "connecting" ? "يتصل…" : "غير متصل";
+  if (msg) setText("botStatus", msg);
+}
+
+/* ─── Stats ──────────────────────────────────────── */
+function fmtUptime(ms) {
+  if (!ms) return "—";
+  const s = Math.floor(ms/1000), m = Math.floor(s/60), h = Math.floor(m/60), d = Math.floor(h/24);
+  if (d) return `${d}ي ${h%24}س`;
+  if (h) return `${h}س ${m%60}د`;
+  if (m) return `${m}:${String(s%60).padStart(2,"0")}`;
+  return `${s}s`;
+}
+function renderStats(d) {
+  if (!d) return;
+  animateNumber("s-msg",  d.totalMessages || 0);
+  animateNumber("s-cmd",  d.totalCommands || 0);
+  animateNumber("s-thr",  d.activeThreads || 0);
+  animateNumber("s-usr",  d.activeUsers   || 0);
+  setText("s-up",   fmtUptime(d.uptime));
+  animateNumber("s-ncmd", d.commands || 0);
+  setText("s-ram",  d.memMB || "—");
+  if (d.botID)   setText("botUID", "UID: " + d.botID);
+  if (d.botName) setText("botName", d.botName);
+  if (d.online)  setStatus("online","متصل ✔");
+}
+function animateNumber(id, newVal) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const cur = parseInt(el.textContent) || 0;
+  if (cur === newVal) return;
+  el.style.transform = "scale(1.2)";
+  el.style.transition = "transform .25s var(--spring)";
+  el.textContent = newVal;
+  setTimeout(() => { el.style.transform = "scale(1)"; }, 250);
+}
+function setText(id, v) {
+  const el = document.getElementById(id);
+  if (el && String(el.textContent) !== String(v)) el.textContent = v;
+}
+async function refreshStats() {
+  const d = await apiFetch("/api/stats");
+  if (d) renderStats(d);
+}
+
+/* ─── API ────────────────────────────────────────── */
+async function apiFetch(url, opts = {}, useToken = true) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const h = { "Content-Type":"application/json", ...(opts.headers || {}) };
+    if (useToken && _token) { h["x-cavor-token"] = _token; h["x-cavor-token"] = _token; }
+    const r = await fetch(url, { ...opts, headers:h, signal:controller.signal });
+    clearTimeout(timer);
+    if (r.status === 401) { showLoginAgain(); return { ok:false, error:"Unauthorized" }; }
+    return await r.json();
+  } catch(e) {
+    clearTimeout(timer);
+    if (e.name === "AbortError") return { ok:false, error:"انتهت مهلة الاتصال" };
+    return { ok:false, error:e.message };
+  }
+}
+function showLoginAgain() {
+  _token = ""; localStorage.removeItem("cavor_token");
+  document.getElementById("login-screen").classList.remove("hidden");
+}
+
+/* ─── Tab Navigation ─────────────────────────────── */
+function switchTab(name) {
+  const prev = document.querySelector(".tab-pane.active");
+  if (prev) {
+    if (prev.id === "tab-" + name) return;
+    prev.classList.remove("active");
+  }
+  const next = document.getElementById("tab-" + name);
+  if (next) next.classList.add("active");
+
+  document.querySelectorAll(".tab, .bn").forEach(el => {
+    el.classList.toggle("active", el.dataset.tab === name);
+  });
+
+  _prevTab = name;
+  if (name === "commands" || name === "activation") loadCommandsQuiet();
+  if (name === "messages") loadMessages();
+  if (name === "cookies") loadCookieStats();
+  if (name === "messenger") { loadMessengerThreads(); }
+  if (name === "logs") { const box = document.getElementById("logBox"); if (box && _autoScroll) box.scrollTop = box.scrollHeight; }
+
+  // ── Angel background + scroll active tab into view ──
+  updateTabBackground(name);
+  requestAnimationFrame(() => {
+    const bn = document.querySelector(`.bn[data-tab="${name}"]`);
+    if (bn) bn.scrollIntoView({ behavior:"smooth", block:"nearest", inline:"center" });
+  });
+}
+
+document.querySelectorAll("[data-tab]").forEach(el => {
+  el.addEventListener("click", () => switchTab(el.dataset.tab));
+});
+
+/* ─── Actions ────────────────────────────────────── */
+async function uploadCookies() {
+  const raw = document.getElementById("cookieInput").value.trim();
+  if (!raw) { toast("اكتب الكوكيز أولاً", "error"); return; }
+  const btn = document.getElementById("btn-upload-cookies");
+  btn.disabled = true; btn.textContent = "⏳ جاري…";
+  const r = await apiFetch("/api/cookies", { method:"POST", body:JSON.stringify({ cookies:raw }) });
+  btn.disabled = false; btn.textContent = "📤 رفع وتسجيل الدخول";
+  if (r.ok) { toast(`✅ تم رفع ${r.count} كوكي — جاري الدخول…`, "success"); setStatus("connecting","يتصل…"); }
+  else toast("❌ " + (r.error || "فشل"), "error");
+}
+/* ─── Cookie Renewal ────────────────────── */
+const STATUS_LABELS = { active: '✅ نشط', expiring: '⚠️ ينتهي قريباً', expired: '❌ منتهي', 'renewal-failed': '🔄 فشل التجديد' };
+const STATUS_COLORS = { active: 'green', expiring: 'yellow', expired: 'red', 'renewal-failed': 'orange' };
+
+function _fmtTimeAgo(ts) {
+  if (!ts) return '—';
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'الآن';
+  if (diff < 3600000) return Math.floor(diff/60000) + ' دقيقة';
+  if (diff < 86400000) return Math.floor(diff/3600000) + ' ساعة';
+  return Math.floor(diff/86400000) + ' يوم';
+}
+
+function _fmtRemaining(ms) {
+  if (!ms || ms <= 0) return '—';
+  const h = Math.floor(ms/3600000);
+  const m = Math.floor((ms%3600000)/60000);
+  if (h > 0) return h + ' ساعة ' + m + ' دقيقة';
+  return m + ' دقيقة';
+}
+
+function updateCookieStatsUI(data) {
+  document.getElementById('ck-status').textContent = STATUS_LABELS[data.status] || data.status || '—';
+  document.getElementById('ck-successes').textContent = data.renewSuccesses || 0;
+  document.getElementById('ck-failures').textContent = data.renewFailures || 0;
+  document.getElementById('ck-remaining').textContent = _fmtRemaining(data.remainingMs);
+  document.getElementById('ck-last-success').textContent = _fmtTimeAgo(data.lastSuccessTs);
+  document.getElementById('ck-last-attempt').textContent = _fmtTimeAgo(data.lastAttemptTs);
+  // Color the status stat
+  const sc = STATUS_COLORS[data.status] || 'blue';
+  const stEl = document.getElementById('ck-status');
+  if (stEl) { stEl.className = 'stat-v'; stEl.style.color = 'var(--' + sc + ')'; }
+  // Failure reason
+  const reasonEl = document.getElementById('ck-failure-reason');
+  if (reasonEl) {
+    if (data.lastFailureReason && data.renewFailures > 0) {
+      reasonEl.style.display = 'block';
+      reasonEl.innerHTML = '⚠️ آخر خطأ: ' + data.lastFailureReason;
+    } else { reasonEl.style.display = 'none'; }
+  }
+  // Renew button state
+  const btn = document.getElementById('btn-renew-cookie');
+  if (btn) { btn.disabled = !!data.renewing; btn.textContent = data.renewing ? '⏳ جاري التجديد…' : '🔄 تجديد الآن'; }
+}
+
+async function loadCookieStats() {
+  try {
+    const r = await apiFetch('/api/cookies/stats');
+    if (r.ok) updateCookieStatsUI(r);
+  } catch (_) {}
+}
+
+async function renewCookieNow() {
+  const btn = document.getElementById('btn-renew-cookie');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري التجديد…'; }
+  try {
+    const r = await apiFetch('/api/cookies/renew', { method: 'POST', body: '{}' });
+    if (r.ok) {
+      toast('✅ تم تجديد الكوكيز بنجاح', 'success');
+      loadCookieStats();
+    } else {
+      toast('❌ ' + (r.error || 'فشل التجديد'), 'error');
+      loadCookieStats();
+    }
+  } catch (e) {
+    toast('❌ خطأ: ' + e.message, 'error');
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 تجديد الآن'; }
+  }
+}
+
+// Listen for real-time cookie stats updates via Socket.io
+async function controlBot(action) {
+  if (action === "stop" && !confirm("⚠️ هل أنت متأكد؟")) return;
+  const btn = document.getElementById(action === "restart" ? "btn-restart" : "btn-stop");
+  if (btn) { btn.disabled = true; btn.textContent = "⏳…"; }
+  const r = await apiFetch("/api/control", { method:"POST", body:JSON.stringify({ action }) });
+  if (btn) { btn.disabled = false; btn.textContent = action === "restart" ? "🔄 إعادة تشغيل" : "⏹ إيقاف البوت"; }
+  if (r.ok) {
+    if (action === "restart") { toast("🔄 جاري إعادة التشغيل…", "warn"); setStatus("connecting","يعيد التشغيل…"); }
+    else toast("⏹ تم إيقاف البوت", "error");
+  } else toast("❌ " + (r.error || "فشل"), "error");
+}
+function pingBot() { if (_socket) _socket.emit("ping-bot"); }
+
+/* ─── Commands ───────────────────────────────────── */
+const CAT_ICONS = { management:"⚙️", media:"🎵", info:"ℹ️", fun:"😄", other:"📌", group:"👥", utility:"🔧" };
+const CAT_NAMES = { management:"إدارة", media:"وسائط", info:"معلومات", fun:"ترفيه", other:"أخرى", group:"غروب", utility:"أدوات" };
+
+async function loadCommandsQuiet() {
+  const r = await apiFetch("/api/commands");
+  if (!r.ok) return;
+  _allCmds = r.commands || [];
+  setText("cmdTotal", _allCmds.length);
+  buildCatFilter();
+  renderCmdGrid(_allCmds);
+  populateEditorSelect(_allCmds);
+  populateActGrid(_allCmds);
+}
+async function loadCommands() { return loadCommandsQuiet(); }
+
+function buildCatFilter() {
+  const cats = ["all", ...new Set(_allCmds.map(c => c.category || "other"))];
+  const el = document.getElementById("cat-filter");
+  if (!el) return;
+  el.innerHTML = cats.map(cat => {
+    const label = cat === "all" ? "الكل" : (CAT_NAMES[cat] || cat);
+    const icon  = cat === "all" ? "📋" : (CAT_ICONS[cat] || "📌");
+    return `<button class="cat-btn ${cat === _activeCat ? "active" : ""}" onclick="setCat('${cat}')">${icon} ${label}</button>`;
+  }).join("");
+}
+function setCat(cat) { _activeCat = cat; buildCatFilter(); filterCommands(); }
+function filterCommands() {
+  const q = (document.getElementById("cmd-search")?.value || "").toLowerCase().trim();
+  const filtered = _allCmds.filter(c => {
+    const inCat = _activeCat === "all" || (c.category || "other") === _activeCat;
+    if (!inCat) return false;
+    if (!q) return true;
+    return c.name.includes(q) || (c.description||"").toLowerCase().includes(q) ||
+           (c.aliases||[]).some(a => String(a).toLowerCase().includes(q));
+  });
+  renderCmdGrid(filtered);
+}
+function renderCmdGrid(cmds) {
+  const grid = document.getElementById("cmdGrid");
+  if (!grid) return;
+  if (!cmds.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="es-icon">🔍</div><p>لا توجد أوامر</p></div>'; return;
+  }
+  grid.innerHTML = cmds.map((c,i) => {
+    const roleClass = c.role >= 3 ? "role-3" : c.role >= 2 ? "role-2" : "role-0";
+    const roleLabel = c.role >= 3 ? "👑 Owner" : c.role >= 2 ? "🔑 Admin" : "👤 الجميع";
+    const catIcon   = CAT_ICONS[c.category||"other"] || "📌";
+    const aliases   = (c.aliases||[]).filter(Boolean);
+    return `<div class="cmd-card" style="animation-delay:${i*15}ms">
+      <div class="cmd-ver">v${c.version||"1.0"}</div>
+      <div class="cn">${catIcon} /${esc(c.name)}</div>
+      <div class="cc">${esc(CAT_NAMES[c.category]||c.category||"أخرى")}</div>
+      <div class="cd">${esc((c.description||"").slice(0,60))}</div>
+      ${aliases.length ? `<div class="c-aliases">/ ${aliases.slice(0,3).join(" / ")}</div>` : ""}
+      <span class="cmd-badge ${roleClass}">${roleLabel}</span>
+      <div class="c-acts">
+        <button class="btn btn-xs btn-ghost" onclick="openEditorFor('${c.name}')">✏️ تعديل</button>
+        <button class="btn btn-xs btn-primary" onclick="quickMetaFor('${c.name}')">⚡ سريع</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+function refreshCmdsIfOpen() {
+  if (document.getElementById("tab-commands")?.classList.contains("active")) loadCommandsQuiet();
+}
+function populateActGrid(cmds) {
+  // populated lazily in loadActConfig
+}
+
+/* ─── Editor ─────────────────────────────────────── */
+function populateEditorSelect(cmds) {
+  const sel = document.getElementById("editor-select");
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— اختر أمراً —</option>' +
+    cmds.map(c => `<option value="${c.name}">${CAT_ICONS[c.category||"other"]||"📌"} /${c.name}</option>`).join("");
+  if (cur && cmds.find(c => c.name === cur)) sel.value = cur;
+}
+function openEditorFor(name) { switchTab("editor"); document.getElementById("editor-select").value = name; onEditorSelectChange(); }
+function quickMetaFor(name) { switchTab("editor"); document.getElementById("editor-select").value = name; onEditorSelectChange(); setTimeout(() => document.getElementById("meta-name")?.focus(), 350); }
+function onEditorSelectChange() {
+  const name = document.getElementById("editor-select").value;
+  if (!name) { document.getElementById("editor-meta-panel").classList.remove("active"); document.getElementById("editor-panel").classList.remove("active"); return; }
+  const cmd = _allCmds.find(c => c.name === name);
+  if (cmd) {
+    document.getElementById("meta-name").value    = cmd.name;
+    document.getElementById("meta-desc").value    = cmd.description || "";
+    document.getElementById("meta-aliases").value = (cmd.aliases||[]).filter(Boolean).join(", ");
+    document.getElementById("meta-role").value    = String(cmd.role ?? 2);
+    document.getElementById("meta-hint").textContent = "";
+    document.getElementById("editor-meta-panel").classList.add("active");
+  }
+  loadCmdSource();
+}
+async function loadCmdSource() {
+  const name = document.getElementById("editor-select").value;
+  if (!name) { document.getElementById("editor-panel").classList.remove("active"); return; }
+  const r = await apiFetch(`/api/commands/${name}/source`);
+  if (!r.ok) { toast("❌ " + r.error, "error"); return; }
+  document.getElementById("editor-panel").classList.add("active");
+  document.getElementById("editor-cmd-name").textContent = "/" + r.name;
+  document.getElementById("editor-code").value = r.code;
+  const guide = r.code.match(/guide:\s*\{\s*en:\s*["']([^"']+)["']/)?.[1] || "";
+  document.getElementById("meta-guide").value = guide.replace(/\\n/g,"\n");
+  document.getElementById("editor-hint").textContent = "";
+}
+async function reloadCmdSource() { await loadCmdSource(); toast("↩ تم إعادة التحميل", "success"); }
+async function saveCmdSource() {
+  const name = document.getElementById("editor-select").value;
+  const code = document.getElementById("editor-code").value.trim();
+  if (!name || !code) { toast("اختر أمراً وأضف الكود", "error"); return; }
+  const btn = document.getElementById("btn-save-cmd");
+  btn.disabled = true; btn.textContent = "⏳…";
+  const r = await apiFetch(`/api/commands/${name}/source`, { method:"POST", body:JSON.stringify({ code }) });
+  btn.disabled = false; btn.textContent = "💾 حفظ وتطبيق";
+  if (r.ok) { toast(r.message || "✅ تم الحفظ", "success"); document.getElementById("editor-hint").textContent = r.message || "✅"; loadCommandsQuiet(); }
+  else toast("❌ " + r.error, "error");
+}
+async function saveCmdMeta() {
+  const name = document.getElementById("editor-select").value;
+  if (!name) { toast("اختر أمراً أولاً", "error"); return; }
+  const newName  = document.getElementById("meta-name").value.trim().toLowerCase();
+  const desc     = document.getElementById("meta-desc").value.trim();
+  const aliasRaw = document.getElementById("meta-aliases").value.trim();
+  const role     = parseInt(document.getElementById("meta-role").value) || 2;
+  const guide    = document.getElementById("meta-guide").value.trim();
+  const aliases  = aliasRaw ? aliasRaw.split(",").map(a => a.trim()).filter(Boolean) : [];
+  const btn = document.getElementById("btn-save-meta");
+  btn.disabled = true; btn.textContent = "⏳…";
+  const r = await apiFetch(`/api/commands/${name}/update-meta`, {
+    method:"POST", body:JSON.stringify({ newName: newName !== name ? newName : undefined, aliases, description:desc, role, guide })
+  });
+  btn.disabled = false; btn.textContent = "⚡ تطبيق";
+  if (r.ok) { toast(r.message || "✅", "success"); document.getElementById("meta-hint").textContent = r.message || "✅"; await loadCommandsQuiet(); if (r.name && r.name !== name) { document.getElementById("editor-select").value = r.name; onEditorSelectChange(); } }
+  else { toast("❌ " + r.error, "error"); document.getElementById("meta-hint").textContent = "❌ " + r.error; }
+}
+
+/* ─── Protection ─────────────────────────────────── */
+const PROTS = [
+  "Stealth v2","Human Typing","Natural Presence","MQTT Health","Session Refresher",
+  "Keep Alive","Rate Limiter","Outgoing Throttle","Anti-Detection","Behavior Scheduler",
+  "Human Read Receipt","Scroll Simulator","Reaction Delay","Connection Jitter",
+  "Duplicate Guard","Anti-Flood","Anti-Spam","Typing Variator","UA Rotator","Universal Guard"
+];
+function loadProtections() {
+  const g = document.getElementById("protGrid");
+  if (!g) return;
+  g.innerHTML = PROTS.map((p,i) =>
+    `<div class="prot-pill" style="animation-delay:${i*30}ms"><div class="p-dot"></div><span>${p}</span></div>`
+  ).join("");
+}
+
+/* ─── Settings ───────────────────────────────────── */
+async function loadSettings() {
+  const r = await apiFetch("/api/config");
+  if (!r.ok) return;
+  const c = r.config;
+  setVal("cfg-botName",  c.botName || "Cavor-Xv3-11/x");
+  setVal("cfg-prefix",   c.prefix  || "/");
+  setCheck("cfg-stealth",   c.stealth?.enable !== false);
+  setCheck("cfg-keepalive", c.keepAlive?.enable !== false);
+  setCheck("cfg-mqtt",      c.mqttHealthCheck?.enable !== false);
+  setCheck("cfg-adminOnly", c.adminOnly?.enable !== false);
+  await loadAdmins();
+}
+async function saveSettings() {
+  const body = {
+    botName: getVal("cfg-botName"), prefix: getVal("cfg-prefix"),
+    stealth: { enable: getCheck("cfg-stealth") },
+    keepAlive: { enable: getCheck("cfg-keepalive") },
+    mqttHealthCheck: { enable: getCheck("cfg-mqtt") },
+    adminOnly: { enable: getCheck("cfg-adminOnly") },
+  };
+  const dashPwd = getVal("cfg-dashpwd").trim();
+  if (dashPwd) body.dashboard = { password: dashPwd };
+  const r = await apiFetch("/api/config", { method:"POST", body:JSON.stringify(body) });
+  const hint = document.getElementById("settings-hint");
+  if (r.ok) { toast("✅ تم حفظ الإعدادات", "success"); if (hint) hint.textContent = "✅ تم الحفظ"; }
+  else { toast("❌ " + (r.error||"فشل"), "error"); if (hint) hint.textContent = "❌ " + r.error; }
+}
+function setVal(id,v)   { const e=document.getElementById(id); if(e) e.value=v; }
+function getVal(id)     { return document.getElementById(id)?.value||""; }
+function setCheck(id,v) { const e=document.getElementById(id); if(e) e.checked=!!v; }
+function getCheck(id)   { return !!document.getElementById(id)?.checked; }
+
+/* ─── Admins ─────────────────────────────────────── */
+async function loadAdmins() {
+  const r = await apiFetch("/api/admins");
+  if (!r.ok) return;
+  _superAdmins = (r.superAdminBot||[]).map(String);
+  _admins      = (r.adminBot||[]).map(String);
+  setVal("adm-ownerID", r.ownerID || "");
+  renderAdminList("adm-super-list", _superAdmins, "super");
+  renderAdminList("adm-admin-list", _admins, "admin");
+}
+function renderAdminList(cid, list, type) {
+  const el = document.getElementById(cid); if (!el) return;
+  if (!list.length) { el.innerHTML = '<span style="font-size:12px;color:var(--t3);">لا يوجد</span>'; return; }
+  el.innerHTML = list.map(uid =>
+    `<div class="admin-tag"><span>${esc(uid)}</span><button onclick="removeAdmin('${type}','${uid}')" class="admin-tag-rm">✕</button></div>`
+  ).join("");
+}
+function addSuperAdmin() {
+  const inp = document.getElementById("adm-super-input");
+  const uid = (inp?.value||"").trim().replace(/\D/g,"");
+  if (!uid) { toast("أدخل UID صحيح","error"); return; }
+  if (_superAdmins.includes(uid)) { toast("موجود مسبقاً","warn"); return; }
+  _superAdmins.push(uid); renderAdminList("adm-super-list",_superAdmins,"super");
+  if (inp) inp.value = "";
+}
+function addAdmin() {
+  const inp = document.getElementById("adm-admin-input");
+  const uid = (inp?.value||"").trim().replace(/\D/g,"");
+  if (!uid) { toast("أدخل UID صحيح","error"); return; }
+  if (_admins.includes(uid)) { toast("موجود مسبقاً","warn"); return; }
+  _admins.push(uid); renderAdminList("adm-admin-list",_admins,"admin");
+  if (inp) inp.value = "";
+}
+function removeAdmin(type, uid) {
+  if (type === "super") { _superAdmins = _superAdmins.filter(x => x !== uid); renderAdminList("adm-super-list",_superAdmins,"super"); }
+  else { _admins = _admins.filter(x => x !== uid); renderAdminList("adm-admin-list",_admins,"admin"); }
+}
+async function saveAdmins() {
+  const ownerID = getVal("adm-ownerID").trim().replace(/\D/g,"");
+  const body = { ownerID, adminBot:_admins.map(Number), superAdminBot:_superAdmins.map(Number) };
+  const r = await apiFetch("/api/admins", { method:"POST", body:JSON.stringify(body) });
+  const hint = document.getElementById("adm-hint");
+  if (r.ok) { toast("✅ تم حفظ قائمة الأدمن","success"); if (hint) hint.textContent = "✅"; }
+  else { toast("❌ "+(r.error||"فشل"),"error"); }
+}
+
+/* ─── Messages Tab ───────────────────────────────── */
+async function loadMessages() {
+  const r = await apiFetch("/api/messages");
+  const el = document.getElementById("msgLog");
+  const el2 = document.getElementById("msgLogControl");
+  if (!r.ok) return;
+  const msgs = r.messages || [];
+  if (!msgs.length) return;
+  const html = msgs.map(m => {
+    const dt = new Date(m.ts).toLocaleTimeString("ar");
+    return `<div class="msg-item"><div class="msg-body">${esc(m.body)}</div><div class="msg-meta">${dt} — ${m.tid||""}</div></div>`;
+  }).join("");
+  if (el) el.innerHTML = html;
+  if (el2) el2.innerHTML = html;
+}
+
+/* ─── Live Logs ──────────────────────────────────── */
+let _logRaf = null;
+let _logPendingLines = [];
+function addLogLine(d) {
+  _logLines.push(d);
+  if (_logLines.length > 1000) _logLines.shift();
+  _logPendingLines.push(d);
+  if (!_logRaf) _logRaf = requestAnimationFrame(flushLogLines);
+}
+function flushLogLines() {
+  _logRaf = null;
+  const box = document.getElementById("logBox");
+  if (!box || !_logPendingLines.length) { _logPendingLines = []; return; }
+  const frag = document.createDocumentFragment();
+  _logPendingLines.forEach(d => {
+    const div = document.createElement("span");
+    div.className = "log-line";
+    const ts = new Date(d.ts).toTimeString().slice(0,8);
+    const colorLine = d.line
+      .replace(/\[([^\]]+)\]/g, (_,g) => `<span style="color:#FFD60A">[${g}]</span>`)
+      .replace(/(✔|✅)/g, '<span style="color:#32D74B">$1</span>')
+      .replace(/(✘|❌|Error|error)/g, '<span style="color:#FF453A">$1</span>')
+      .replace(/(⚠|warn|WARN)/g, '<span style="color:#FFD60A">$1</span>');
+    div.innerHTML = `<span class="log-ts">${ts}</span>${colorLine}\n`;
+    frag.appendChild(div);
+  });
+  _logPendingLines = [];
+  box.appendChild(frag);
+  setText("log-count", _logLines.length + " سطر");
+  if (_autoScroll) box.scrollTop = box.scrollHeight;
+  while (box.children.length > 500) box.removeChild(box.firstChild);
+}
+function toggleAutoScroll() {
+  _autoScroll = !_autoScroll;
+  const btn = document.getElementById("btn-autoscroll");
+  btn.textContent = `🔒 Auto-scroll: ${_autoScroll?"تشغيل":"إيقاف"}`;
+  if (_autoScroll) { const box = document.getElementById("logBox"); if(box) box.scrollTop = box.scrollHeight; }
+}
+function clearLogs() { _logLines = []; const box = document.getElementById("logBox"); if(box) box.innerHTML = ""; setText("log-count","0 سطر"); }
+async function downloadLogs() {
+  const text = _logLines.map(l => new Date(l.ts).toISOString() + " " + l.line).join("\n");
+  const a = document.createElement("a"); a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text); a.download = `cavor-logs-${Date.now()}.txt`; a.click();
+}
+
+/* ─── Activation ─────────────────────────────────── */
+async function loadThreadsForAct() {
+  const r = await apiFetch("/api/threads");
+  const el = document.getElementById("threads-list-act");
+  if (!r.ok || !r.threads?.length) {
+    el.style.display = "block"; el.innerHTML = '<p style="font-size:12px;color:var(--t2);">لا توجد غروبات. أدخل ID يدوياً.</p>'; return;
+  }
+  el.style.display = "block";
+  el.innerHTML = '<div style="font-size:11px;color:var(--t2);margin-bottom:6px;">اختر غروباً:</div>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+    r.threads.map(t =>
+      `<button class="btn btn-ghost btn-xs" onclick="selectActThread('${t.tid}')">
+        ${t.type === "group" ? "👥" : "💬"} ${esc(t.name.slice(0,25))}
+       </button>`
+    ).join("") + '</div>';
+}
+function selectActThread(tid) { document.getElementById("act-tid").value = tid; loadActConfig(); }
+async function loadActConfig() {
+  const tid = document.getElementById("act-tid").value.trim();
+  if (!tid) { toast("أدخل Thread ID أولاً","error"); return; }
+  _actTid = tid;
+  if (!_allCmds.length) await loadCommandsQuiet();
+  const r = await apiFetch(`/api/thread-commands/${tid}`);
+  if (!r.ok) { toast("❌ " + r.error, "error"); return; }
+  const cfg = r.config || { mode:"blacklist", commands:[] };
+  _actMode = cfg.mode || "blacklist";
+  _actSelected = new Set((cfg.commands || []).map(c => c.toLowerCase()));
+  document.getElementById("act-tid-display").textContent = tid;
+  document.getElementById("act-content").style.display = "block";
+  setActMode(_actMode);
+  renderActGrid();
+}
+function setActMode(mode) {
+  _actMode = mode;
+  document.getElementById("mode-bl").className = "mode-pill" + (mode === "blacklist" ? " active-bl" : "");
+  document.getElementById("mode-wl").className = "mode-pill" + (mode === "whitelist" ? " active-wl" : "");
+  document.getElementById("act-mode-hint").textContent = mode === "blacklist" ? "⛔ الأوامر المحددة معطّلة في هذا الغروب" : "✅ فقط الأوامر المحددة مسموحة";
+}
+function renderActGrid() {
+  const grid = document.getElementById("actGrid"); if (!grid) return;
+  grid.innerHTML = _allCmds.map(c => {
+    const sel = _actSelected.has(c.name);
+    return `<div class="act-card ${sel ? "disabled-cmd" : ""}" id="ac-${c.name}">
+      <div><div class="ac-name">/${esc(c.name)}</div><div class="ac-cat">${esc(c.category||"")}</div></div>
+      <label class="switch"><input type="checkbox" ${sel?"checked":""} onchange="toggleActCmd('${c.name}',this.checked)"><span class="slider"></span></label>
+    </div>`;
+  }).join("");
+}
+function toggleActCmd(name, checked) {
+  if (checked) _actSelected.add(name); else _actSelected.delete(name);
+  const card = document.getElementById("ac-" + name);
+  if (card) card.classList.toggle("disabled-cmd", checked);
+}
+async function saveActConfig() {
+  const r = await apiFetch(`/api/thread-commands/${_actTid}`, { method:"POST", body:JSON.stringify({ mode: _actMode, commands: [..._actSelected] }) });
+  const hint = document.getElementById("act-save-hint");
+  if (r.ok) { toast("✅ تم حفظ إعدادات الغروب","success"); if(hint) hint.textContent="✅ تم"; }
+  else { toast("❌ "+(r.error||"فشل"),"error"); }
+}
+async function resetActConfig() {
+  const r = await apiFetch(`/api/thread-commands/${_actTid}`, { method:"DELETE" });
+  if (r.ok) { _actSelected.clear(); _actMode="blacklist"; setActMode("blacklist"); renderActGrid(); toast("✅ تم الإعادة","success"); }
+  else toast("❌ "+(r.error||"فشل"),"error");
+}
+
+/* ═══════════════════════════════════════════════════
+   MESSENGER MODULE
+   ═══════════════════════════════════════════════════ */
+
+async function loadMessengerThreads() {
+  document.getElementById("threadList").innerHTML = '<div class="thread-list-empty">🔄 جاري التحميل…</div>';
+  const r = await apiFetch("/api/messenger/threads");
+  if (!r.ok) {
+    document.getElementById("threadList").innerHTML = `<div class="thread-list-empty">❌ ${r.error||"خطأ في التحميل"}</div>`;
+    return;
+  }
+  _messengerThreads = r.threads || [];
+  renderThreadList(_messengerThreads);
+}
+
+function renderThreadList(threads) {
+  const el = document.getElementById("threadList"); if (!el) return;
+  if (!threads.length) {
+    el.innerHTML = '<div class="thread-list-empty">📭 لا توجد غروبات بعد<br><span style="font-size:10px;opacity:.6;">سيظهر الغروب عند أول رسالة</span></div>';
+    return;
+  }
+  el.innerHTML = threads.map(t => {
+    const isActive = _activeThread?.tid === t.tid;
+    const letter = (t.name || "G")[0].toUpperCase();
+    const lastTs = t.lastTs ? relativeTime(t.lastTs) : "";
+    const unread = _unreadCounts[t.tid] || 0;
+    const lastPreview = t.lastBody ? esc(t.lastBody.slice(0,32)) : '<span style="opacity:.5">لا توجد رسائل</span>';
+    const avatarHtml = t.imageSrc
+      ? `<img src="${esc(t.imageSrc)}" style="width:100%;height:100%;object-fit:cover;border-radius:14px" onerror="this.parentElement.textContent='${letter}'">`
+      : letter;
+    return `<div class="thread-item ${isActive?"active":""}" onclick="openThread('${t.tid}','${esc(t.name||"غروب")}')" data-tid="${t.tid}">
+      <div class="thread-av">${avatarHtml}</div>
+      <div class="thread-info">
+        <div class="thread-name">${esc(t.name||t.tid)}</div>
+        <div class="thread-last">${t.lastIsFromBot ? "أنت: " : ""}${lastPreview}</div>
+      </div>
+      ${lastTs ? `<div class="thread-time">${lastTs}</div>` : ""}
+      ${unread > 0 ? `<div class="thread-badge">${unread}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function filterThreads() {
+  const q = (document.getElementById("threadSearch")?.value || "").toLowerCase();
+  if (!q) { renderThreadList(_messengerThreads); return; }
+  renderThreadList(_messengerThreads.filter(t => (t.name||"").toLowerCase().includes(q) || t.tid.includes(q)));
+}
+
+/* ── Sidebar Tabs (Threads / Requests) ─────────────────────────────────────── */
+let _activeSidebarTab = "groups";
+let _messengerRequests = [];
+
+function switchSidebarTab(tab) {
+  _activeSidebarTab = tab;
+  const isGroups = tab === "groups";
+  document.getElementById("sideTabGroups").classList.toggle("active", isGroups);
+  document.getElementById("sideTabRequests").classList.toggle("active", !isGroups);
+  document.getElementById("threadList").style.display    = isGroups ? "flex" : "none";
+  document.getElementById("requestList").style.display   = isGroups ? "none" : "flex";
+  document.getElementById("threadSearch").style.display  = isGroups ? "block" : "none";
+  if (!isGroups && !_messengerRequests.length) loadMessengerRequests();
+}
+
+function refreshSidebarTab() {
+  if (_activeSidebarTab === "groups") loadMessengerThreads();
+  else loadMessengerRequests();
+}
+
+async function loadMessengerRequests() {
+  const el = document.getElementById("requestList");
+  if (!el) return;
+  el.innerHTML = '<div class="thread-list-empty">🔄 جاري تحميل الطلبات…</div>';
+  const r = await apiFetch("/api/messenger/requests");
+  if (!r.ok) {
+    el.innerHTML = `<div class="thread-list-empty">❌ ${r.error||"خطأ في التحميل"}</div>`;
+    return;
+  }
+  _messengerRequests = r.requests || [];
+  renderRequestList(_messengerRequests);
+  // Update badge
+  const badge = document.getElementById("reqBadge");
+  if (badge) {
+    badge.textContent = _messengerRequests.length;
+    badge.classList.toggle("hidden", _messengerRequests.length === 0);
+  }
+}
+
+function renderRequestList(reqs) {
+  const el = document.getElementById("requestList"); if (!el) return;
+  if (!reqs.length) {
+    el.innerHTML = '<div class="thread-list-empty">📭 لا توجد طلبات معلّقة<br><span style="font-size:10px;opacity:.6;">ستظهر رسائل الطلبات هنا</span></div>';
+    return;
+  }
+  el.innerHTML = reqs.map(rq => {
+    const letter = (rq.name || "?")[0].toUpperCase();
+    const avatarHtml = rq.imageSrc
+      ? `<img src="${esc(rq.imageSrc)}" onerror="this.parentElement.textContent='${letter}'">`
+      : letter;
+    const safeNm = esc(rq.name||"طلب").replace(/'/g,"&#39;");
+    return `<div class="req-item" id="req-${rq.tid}">
+      <div class="req-item-row">
+        <div class="req-item-av">${avatarHtml}</div>
+        <div class="req-item-info">
+          <div class="req-item-name">${esc(rq.name||"طلب")}</div>
+          <div class="req-item-snippet">${esc((rq.snippet||"رسالة معلّقة").slice(0,40))}</div>
+        </div>
+      </div>
+      <div class="req-item-actions">
+        <button class="req-accept-btn" onclick="acceptRequest('${rq.tid}','${safeNm}',this)">✅ قبول</button>
+        <button class="req-view-btn"   onclick="openThread('${rq.tid}','${safeNm}')">👁 عرض</button>
+        <button class="req-ignore-btn" onclick="ignoreRequest('${rq.tid}',this)" title="تجاهل">🗑</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+async function acceptRequest(tid, name, btn) {
+  if (btn) { btn.disabled = true; btn.textContent = "⏳"; }
+  const r = await apiFetch("/api/messenger/accept-request", {
+    method: "POST", body: JSON.stringify({ threadID: tid })
+  });
+  if (r.ok) {
+    toast(`✅ تم قبول طلب ${name}`, "success");
+    // Remove from list
+    _messengerRequests = _messengerRequests.filter(x => x.tid !== tid);
+    const item = document.getElementById(`req-${tid}`);
+    if (item) item.remove();
+    // Update badge
+    const badge = document.getElementById("reqBadge");
+    if (badge) {
+      badge.textContent = _messengerRequests.length;
+      badge.classList.toggle("hidden", !_messengerRequests.length);
+    }
+    // Open the thread
+    setTimeout(() => openThread(tid, name), 800);
+  } else {
+    toast("❌ " + (r.error||"فشل قبول الطلب"), "error");
+    if (btn) { btn.disabled = false; btn.textContent = "✅ قبول"; }
+  }
+}
+
+async function ignoreRequest(tid, btn) {
+  if (btn) { btn.disabled = true; btn.textContent = "⏳"; }
+  const r = await apiFetch("/api/messenger/ignore-request", {
+    method: "POST", body: JSON.stringify({ threadID: tid })
+  });
+  if (r.ok) {
+    toast("✅ تم تجاهل الطلب", "success");
+    _messengerRequests = _messengerRequests.filter(x => x.tid !== tid);
+    const item = document.getElementById(`req-${tid}`);
+    if (item) item.remove();
+    const badge = document.getElementById("reqBadge");
+    if (badge) {
+      badge.textContent = _messengerRequests.length;
+      badge.classList.toggle("hidden", !_messengerRequests.length);
+    }
+  } else {
+    toast("❌ " + (r.error||"فشل"), "error");
+    if (btn) { btn.disabled = false; btn.textContent = "🗑 تجاهل"; }
+  }
+}
+
+async function openThread(tid, name) {
+  const letter = (name || "G")[0].toUpperCase();
+  _activeThread = { tid, name };
+  _unreadCounts[tid] = 0;
+
+  // Update sidebar active state
+  document.querySelectorAll(".thread-item").forEach(el => el.classList.toggle("active", el.dataset.tid === tid));
+
+  // Show chat area
+  document.getElementById("chatEmpty").style.display = "none";
+  const chatActive = document.getElementById("chatActive");
+  chatActive.style.display = "flex";
+
+  // Update chat header
+  setText("chatHdrName", name);
+  const hdrAv = document.getElementById("chatHdrAv");
+  hdrAv.textContent = letter;
+  hdrAv.style.backgroundImage = "";
+  setText("chatHdrMeta", `ID: ${tid}`);
+
+  // Update group info panel header
+  document.getElementById("gipNameDisplay").textContent = name;
+  const gipLetter = document.getElementById("gipAvatarLetter");
+  const gipImg = document.getElementById("gipAvatarImg");
+  gipLetter.textContent = letter;
+  gipLetter.style.display = "";
+  if (gipImg) { gipImg.style.display = "none"; gipImg.src = ""; }
+  document.getElementById("gipNewName").value = name;
+
+  // Show cached image from thread list if available
+  const cached = _messengerThreads.find(t => t.tid === tid);
+  if (cached?.imageSrc) _applyThreadImage(cached.imageSrc, tid);
+
+  // Mobile: hide sidebar, show chat
+  if (window.innerWidth <= 700) {
+    document.getElementById("messengerSidebar").classList.add("hidden-mobile");
+    document.getElementById("messengerChat").classList.remove("hidden-mobile");
+  }
+
+  // Load messages
+  await loadThreadMessages(tid);
+  loadThreadInfo();
+}
+
+function _applyThreadImage(src, tid) {
+  if (!src) return;
+  // Header avatar
+  const hdrAv = document.getElementById("chatHdrAv");
+  if (hdrAv && _activeThread?.tid === tid) {
+    hdrAv.innerHTML = `<img src="${esc(src)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentElement.innerHTML='${((_activeThread?.name||"G")[0]).toUpperCase()}'">`;
+  }
+  // Group info avatar
+  const gipImg = document.getElementById("gipAvatarImg");
+  const gipLetter = document.getElementById("gipAvatarLetter");
+  if (gipImg) {
+    gipImg.src = src;
+    gipImg.style.display = "block";
+    gipImg.onerror = function() { this.style.display="none"; if(gipLetter) gipLetter.style.display=""; };
+  }
+  if (gipLetter) gipLetter.style.display = "none";
+  // Update in thread list data
+  const t = _messengerThreads.find(x => x.tid === tid);
+  if (t) { t.imageSrc = src; filterThreads(); }
+}
+
+function closeChatMobile() {
+  if (window.innerWidth <= 700) {
+    document.getElementById("messengerSidebar").classList.remove("hidden-mobile");
+    document.getElementById("messengerChat").classList.add("hidden-mobile");
+  }
+  _activeThread = null;
+  document.getElementById("chatEmpty").style.display = "flex";
+  document.getElementById("chatActive").style.display = "none";
+}
+
+async function loadThreadMessages(tid) {
+  const r = await apiFetch(`/api/messenger/thread/${tid}/messages`);
+  if (!r.ok) return;
+  const msgs = r.messages || [];
+  _threadMessages[tid] = msgs;
+  renderChatMessages(msgs);
+}
+
+function renderChatMessages(msgs) {
+  const box = document.getElementById("chatMessages"); if (!box) return;
+  if (!msgs.length) {
+    box.innerHTML = '<div class="msg-system">لا توجد رسائل في هذه الجلسة</div>';
+    return;
+  }
+  const botID = String(document.getElementById("botUID")?.textContent?.replace("UID: ","") || "");
+  let lastDate = "";
+  const html = msgs.map(m => {
+    const isFromBot = m.isFromBot || (botID && m.senderID === botID);
+    const date = new Date(m.ts).toLocaleDateString("ar");
+    let dateSep = "";
+    if (date !== lastDate) { lastDate = date; dateSep = `<div class="chat-date-sep"><span>${date}</span></div>`; }
+    const time = new Date(m.ts).toLocaleTimeString("ar",{hour:"2-digit",minute:"2-digit"});
+    const letter = (m.senderName || m.senderID || "?")[0].toUpperCase();
+    let content = "";
+    if (m.body) content += `<div class="msg-text">${esc(m.body).replace(/\n/g,"<br>")}</div>`;
+    if (m.attachments?.length) {
+      m.attachments.forEach(a => {
+        if ((a.type === "photo" || a.type === "sticker") && a.url)
+          content += `<img class="msg-image" src="${esc(a.url)}" alt="صورة" loading="lazy" onclick="window.open('${esc(a.url)}','_blank')">`;
+        else if (a.type === "video" && a.url)
+          content += `<video class="msg-video" controls src="${esc(a.url)}" preload="metadata"></video>`;
+        else if (a.type === "audio" && a.url)
+          content += `<audio class="msg-audio" controls src="${esc(a.url)}"></audio>`;
+        else if (a.url || a.filename)
+          content += `<div class="msg-attachment">📎 <a href="${esc(a.url||"#")}" target="_blank" style="color:inherit;text-decoration:none;">${esc(a.filename||a.type||"ملف")}</a></div>`;
+      });
+    }
+    const fbUrl = m.senderID ? `https://www.facebook.com/${m.senderID}` : "#";
+    return `${dateSep}<div class="msg-bubble-wrap ${isFromBot?"from-bot":""}">
+      ${!isFromBot
+        ? `<a href="${fbUrl}" target="_blank" style="text-decoration:none;flex-shrink:0;"><div class="msg-avatar" title="${esc(m.senderName||m.senderID||"")}">${letter}</div></a>`
+        : `<div class="msg-avatar" style="background:linear-gradient(135deg,var(--blue),var(--purple));overflow:hidden;"><img src="/angel.png" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML='D'"></div>`}
+      <div>
+        ${!isFromBot && m.senderName ? `<div class="msg-sender-name"><a href="${fbUrl}" target="_blank" style="color:inherit;text-decoration:none;" title="فتح الملف الشخصي">${esc(m.senderName)}</a></div>` : ""}
+        <div class="msg-bubble">${content}</div>
+        <div class="msg-time" title="${new Date(m.ts).toLocaleString('ar')}">${time}</div>
+      </div>
+    </div>`;
+  }).join("");
+  box.innerHTML = html;
+  box.scrollTop = box.scrollHeight;
+}
+
+function onMessengerMsg(msg) {
+  const tid = msg.tid;
+
+  // Update thread last message in sidebar
+  const t = _messengerThreads.find(x => x.tid === tid);
+  if (t) {
+    t.lastBody = msg.body || "";
+    t.lastTs = msg.ts;
+    t.lastIsFromBot = msg.isFromBot;
+    // Re-sort by lastTs
+    _messengerThreads.sort((a,b) => (b.lastTs||0) - (a.lastTs||0));
+    filterThreads();
+  } else {
+    // غروب جديد — أضفه فوراً باسم مؤقت ثم اجلب اسمه الحقيقي
+    _messengerThreads.unshift({ tid, name: `جاري التحميل…`, type: "group", lastBody: msg.body||"", lastTs: msg.ts });
+    filterThreads();
+    // اجلب اسم الغروب من السيرفر
+    apiFetch(`/api/messenger/thread/${tid}/info`).then(r => {
+      if (!r.ok) {
+        const t2 = _messengerThreads.find(x => x.tid === tid);
+        if (t2 && t2.name === "جاري التحميل…") { t2.name = `غروب ${tid}`; filterThreads(); }
+        return;
+      }
+      const info = r.info || {};
+      const realName = info.threadName || info.name || `غروب ${tid}`;
+      const imgSrc   = info.imageSrc  || info.image || null;
+      const thr = _messengerThreads.find(x => x.tid === tid);
+      if (thr) { thr.name = realName; if (imgSrc) thr.imageSrc = imgSrc; filterThreads(); }
+    }).catch(() => {
+      const t2 = _messengerThreads.find(x => x.tid === tid);
+      if (t2 && t2.name === "جاري التحميل…") { t2.name = `غروب ${tid}`; filterThreads(); }
+    });
+  }
+
+  // If this thread is active, add message to chat
+  if (_activeThread?.tid === tid) {
+    if (!_threadMessages[tid]) _threadMessages[tid] = [];
+    _threadMessages[tid].push(msg);
+    appendChatMessage(msg);
+    // Clear unread for active thread
+    _unreadCounts[tid] = 0;
+  } else {
+    // Increment unread
+    _unreadCounts[tid] = (_unreadCounts[tid] || 0) + 1;
+    // Update badge on sidebar
+    const item = document.querySelector(`.thread-item[data-tid="${tid}"] .thread-badge`);
+    if (item) item.textContent = _unreadCounts[tid];
+    else {
+      const ti = document.querySelector(`.thread-item[data-tid="${tid}"]`);
+      if (ti) { const b = document.createElement("div"); b.className="thread-badge"; b.textContent=_unreadCounts[tid]; ti.appendChild(b); }
+    }
+  }
+
+  // Update messages tab control panel
+  loadMessages();
+}
+
+function appendChatMessage(msg) {
+  const box = document.getElementById("chatMessages"); if (!box) return;
+  const botID = String(document.getElementById("botUID")?.textContent?.replace("UID: ","") || "");
+  const isFromBot = msg.isFromBot || (botID && String(msg.senderID) === botID);
+  const time = new Date(msg.ts).toLocaleTimeString("ar",{hour:"2-digit",minute:"2-digit"});
+  const letter = (msg.senderName || msg.senderID || "?")[0]?.toUpperCase() || "?";
+  let content = msg.body ? `<div class="msg-text">${esc(msg.body).replace(/\n/g,"<br>")}</div>` : "";
+  if (msg.attachments?.length) {
+    msg.attachments.forEach(a => {
+      if ((a.type === "photo" || a.type === "sticker") && a.url)
+        content += `<img class="msg-image" src="${esc(a.url)}" alt="صورة" loading="lazy" onclick="window.open('${esc(a.url)}','_blank')">`;
+      else if (a.type === "video" && a.url)
+        content += `<video class="msg-video" controls src="${esc(a.url)}" preload="metadata"></video>`;
+      else if (a.type === "audio" && a.url)
+        content += `<audio class="msg-audio" controls src="${esc(a.url)}"></audio>`;
+      else if (a.url || a.filename)
+        content += `<div class="msg-attachment">📎 <a href="${esc(a.url||"#")}" target="_blank" style="color:inherit;text-decoration:none;">${esc(a.filename||a.type||"ملف")}</a></div>`;
+    });
+  }
+  if (!content) content = `<div class="msg-text" style="color:var(--t3);font-style:italic">[رسالة فارغة]</div>`;
+  const fbUrlA = msg.senderID ? `https://www.facebook.com/${msg.senderID}` : "#";
+  const div = document.createElement("div");
+  div.className = `msg-bubble-wrap ${isFromBot?"from-bot":""}`;
+  div.style.animation = "msgIn .3s var(--spring)";
+  div.innerHTML = `
+    ${!isFromBot
+      ? `<a href="${fbUrlA}" target="_blank" style="text-decoration:none;flex-shrink:0;"><div class="msg-avatar" title="${esc(msg.senderName||msg.senderID||"")}">${letter}</div></a>`
+      : `<div class="msg-avatar" style="background:linear-gradient(135deg,var(--blue),var(--purple));overflow:hidden;"><img src="/angel.png" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML='D'"></div>`}
+    <div>
+      ${!isFromBot && msg.senderName ? `<div class="msg-sender-name"><a href="${fbUrlA}" target="_blank" style="color:inherit;text-decoration:none;" title="فتح الملف الشخصي">${esc(msg.senderName)}</a></div>` : ""}
+      <div class="msg-bubble">${content}</div>
+      <div class="msg-time" title="${new Date(msg.ts).toLocaleString('ar')}">${time}</div>
+    </div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendChatMessage() {
+  if (!_activeThread) { toast("اختر غروباً أولاً","error"); return; }
+  const input = document.getElementById("msgInput");
+  const body = input.value.trim();
+  const btn = document.getElementById("btnSend");
+
+  if (_pendingFile) {
+    btn.disabled = true;
+    btn.innerHTML = "⏳";
+    input.value = "";
+    autoResizeInput(input);
+    input.placeholder = "اكتب رسالة…";
+    await sendPendingFile(body);
+    btn.disabled = false;
+    btn.innerHTML = "➤";
+    return;
+  }
+
+  if (!body) return;
+  btn.disabled = true;
+  input.value = "";
+  autoResizeInput(input);
+
+  const r = await apiFetch("/api/messenger/send", {
+    method:"POST",
+    body: JSON.stringify({ threadID: _activeThread.tid, body, silent: _silentMode })
+  });
+  btn.disabled = false;
+  if (!r.ok) toast("❌ " + (r.error||"فشل الإرسال"), "error");
+}
+
+async function sendPendingFile(caption = "") {
+  if (!_pendingFile || !_activeThread) return;
+
+  const endpoint = caption
+    ? "/api/messenger/send-with-caption"
+    : "/api/messenger/send-file";
+
+  const payload = {
+    threadID: _activeThread.tid,
+    data: _pendingFile.data,
+    mimetype: _pendingFile.type,
+    filename: _pendingFile.name,
+  };
+  if (caption) payload.caption = caption;
+
+  const r = await apiFetch(endpoint, { method:"POST", body: JSON.stringify(payload) });
+
+  if (r.ok) {
+    // Show local preview in chat
+    const isImg  = _pendingFile.type.startsWith("image/");
+    const isAud  = _pendingFile.type.startsWith("audio/");
+    const localUrl = `data:${_pendingFile.type};base64,${_pendingFile.data}`;
+    const fakeMsg = {
+      ts: Date.now(),
+      senderID: document.getElementById("botUID")?.textContent?.replace("UID: ","") || "",
+      isFromBot: true,
+      body: caption || null,
+      attachments: isImg
+        ? [{ type:"photo", url: localUrl }]
+        : isAud
+          ? [{ type:"audio", url: localUrl }]
+          : [{ type:"file", filename: _pendingFile.name }]
+    };
+    appendChatMessage(fakeMsg);
+    clearPendingFile();
+    toast("✅ تم الإرسال","success");
+  } else {
+    toast("❌ " + (r.error||"فشل الإرسال"), "error");
+  }
+}
+
+function clearPendingFile() {
+  _pendingFile = null;
+  const area = document.getElementById("filePreviewArea");
+  area.innerHTML = "";
+  area.classList.add("hidden");
+}
+
+function handleMsgKeydown(e) {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+}
+function autoResizeInput(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 120) + "px";
+}
+
+/* ── Silent Mode ── */
+function toggleSilent() {
+  _silentMode = !_silentMode;
+  const btn = document.getElementById("btnSilent");
+  btn.classList.toggle("silent-on", _silentMode);
+  btn.textContent = _silentMode ? "🔕" : "🔔";
+  document.getElementById("silentBanner").classList.toggle("hidden", !_silentMode);
+  toast(_silentMode ? "🔕 وضع الصامت مفعّل" : "🔔 وضع الصامت معطّل", "warn");
+}
+
+/* ── File Upload ── */
+document.getElementById("fileInput").addEventListener("change", function() {
+  const file = this.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const base64 = e.target.result.split(",")[1];
+    _pendingFile = { data: base64, type: file.type, name: file.name };
+    const area = document.getElementById("filePreviewArea");
+    const icon = file.type.startsWith("image/") ? "🖼" : file.type.startsWith("audio/") ? "🎵" : "📎";
+    area.innerHTML = `<div class="file-chip">${icon} ${esc(file.name.slice(0,25))} <button class="file-chip-rm" onclick="clearPendingFile()">✕</button></div>`;
+    area.classList.remove("hidden");
+    document.getElementById("msgInput").placeholder = "أضف تعليق (اختياري)…";
+  };
+  reader.readAsDataURL(file);
+  this.value = "";
+});
+
+/* ── Voice Recording ── */
+let _recTimerInterval = null;
+let _recStartTime = 0;
+
+function _formatRecTime(ms) {
+  const s = Math.floor(ms / 1000);
+  return `${Math.floor(s/60).toString().padStart(2,"0")}:${(s%60).toString().padStart(2,"0")}`;
+}
+
+async function toggleRecording() {
+  if (_mediaRecorder && _mediaRecorder.state === "recording") { stopRecording(); return; }
+  try {
+    const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" :
+                     MediaRecorder.isTypeSupported("audio/ogg;codecs=opus") ? "audio/ogg;codecs=opus" : "audio/mp4";
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    _recordingChunks = [];
+    _mediaRecorder = new MediaRecorder(stream, { mimeType });
+    _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _recordingChunks.push(e.data); };
+    _mediaRecorder.onstop = () => {
+      const actualType = _mediaRecorder.mimeType || mimeType;
+      const ext = actualType.includes("ogg") ? "ogg" : actualType.includes("mp4") ? "m4a" : "webm";
+      const blob = new Blob(_recordingChunks, { type: actualType });
+      const duration = Math.round((Date.now() - _recStartTime) / 1000);
+      clearInterval(_recTimerInterval);
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const base64 = ev.target.result.split(",")[1];
+        _pendingFile = { data: base64, type: actualType, name: `voice-${Date.now()}.${ext}` };
+        const area = document.getElementById("filePreviewArea");
+        const mins = Math.floor(duration/60), secs = duration%60;
+        const timeStr = `${mins}:${secs.toString().padStart(2,"0")}`;
+        area.innerHTML = `<div class="file-chip">🎙 رسالة صوتية (${timeStr}) <button class="file-chip-rm" onclick="clearPendingFile()">✕</button></div>`;
+        area.classList.remove("hidden");
+        document.getElementById("msgInput").placeholder = "أضف تعليق (اختياري)…";
+      };
+      reader.readAsDataURL(blob);
+      stream.getTracks().forEach(t => t.stop());
+    };
+    _recStartTime = Date.now();
+    _mediaRecorder.start(200);
+    document.getElementById("recordingIndicator").classList.remove("hidden");
+    document.getElementById("btnRecord").classList.add("recording");
+    // Live timer display
+    const recSpan = document.querySelector("#recordingIndicator span");
+    _recTimerInterval = setInterval(() => {
+      if (recSpan) recSpan.textContent = `🔴 جاري التسجيل… ${_formatRecTime(Date.now() - _recStartTime)}`;
+    }, 500);
+  } catch(e) {
+    toast("❌ لا يمكن الوصول للميكروفون: " + e.message, "error");
+  }
+}
+function stopRecording() {
+  if (_mediaRecorder && _mediaRecorder.state === "recording") {
+    _mediaRecorder.stop();
+    clearInterval(_recTimerInterval);
+    document.getElementById("recordingIndicator").classList.add("hidden");
+    document.getElementById("btnRecord").classList.remove("recording");
+    const recSpan = document.querySelector("#recordingIndicator span");
+    if (recSpan) recSpan.textContent = "جاري التسجيل…";
+  }
+}
+
+/* ── Group Info Panel ── */
+function toggleGroupInfo() {
+  const panel = document.getElementById("groupInfoPanel");
+  const btn = document.getElementById("btnGroupInfo");
+  panel.classList.toggle("hidden");
+  btn.classList.toggle("active", !panel.classList.contains("hidden"));
+  if (!panel.classList.contains("hidden")) loadThreadInfo();
+}
+
+async function loadThreadInfo() {
+  if (!_activeThread) return;
+  const r = await apiFetch(`/api/messenger/thread/${_activeThread.tid}/info`);
+  if (!r.ok) {
+    setText("chatHdrMeta", `ID: ${_activeThread.tid}`);
+    return;
+  }
+  const info = r.info || {};
+  const name = info.threadName || info.name || _activeThread.name;
+  const members = info.participantIDs || info.userInfo?.map(u => u.id) || [];
+  const memberCount = members.length;
+
+  setText("chatHdrMeta", `${memberCount} عضو`);
+  setText("gipNameDisplay", name);
+  setText("gipMetaDisplay", `${memberCount} عضو`);
+  setText("gipMemberCount", memberCount);
+  document.getElementById("gipNewName").value = name;
+  _activeThread.name = name;
+  setText("chatHdrName", name);
+
+  // Group image — imageSrc comes from fca-unofficial getThreadInfo
+  const imgSrc = info.imageSrc || info.image || info.groupImage || info.imageUrl || null;
+  if (imgSrc) _applyThreadImage(imgSrc, _activeThread.tid);
+
+  // Render members
+  const memberList = document.getElementById("gipMemberList");
+  if (memberList) {
+    const users = info.userInfo || members.map(id => ({ id, name: `User ${id}` }));
+    if (users.length) {
+      memberList.innerHTML = users.map(u => {
+        const nm = u.name || u.vanity || u.fullName || u.id || "مستخدم";
+        const nick = info.nicknames?.[u.id] || "";
+        const isAdmin = (info.adminIDs || []).some(a => String(a.id || a) === String(u.id));
+        const fbLink = `https://www.facebook.com/${u.id}`;
+        const safeNm = esc(nm).replace(/'/g,"&#39;");
+        return `<div class="gip-member" data-uid="${u.id}">
+          <a href="${fbLink}" target="_blank" style="text-decoration:none;flex-shrink:0;" title="فتح الملف الشخصي">
+            <div class="gip-member-av" style="transition:all .2s;cursor:pointer;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">${nm[0]?.toUpperCase()||"?"}</div>
+          </a>
+          <div class="gip-member-info">
+            <div class="gip-member-name">
+              <a href="${fbLink}" target="_blank" style="color:inherit;text-decoration:none;hover:underline">${esc(nm)}</a>
+              ${isAdmin ? ' <span style="color:var(--yellow);font-size:9px;background:rgba(255,214,10,.12);padding:1px 5px;border-radius:4px;">أدمن</span>' : ""}
+            </div>
+            ${nick ? `<div class="gip-member-nick">🏷 ${esc(nick)}</div>` : ""}
+            <div class="gip-uid-copy" onclick="navigator.clipboard.writeText('${u.id}').then(()=>toast('✅ تم نسخ الـ UID','success'))" title="نقر لنسخ الـ UID">${u.id} 📋</div>
+          </div>
+          <div class="gip-member-actions">
+            <button class="gip-action-btn gip-profile-btn" onclick="window.open('${fbLink}','_blank')" title="فتح الملف الشخصي على فيسبوك">👤</button>
+            <button class="gip-action-btn gip-nick-btn" onclick="promptNickname('${u.id}','${safeNm}')" title="تغيير/قفل الكنية">✏️</button>
+            <button class="gip-action-btn gip-kick-btn" onclick="kickMember('${u.id}','${safeNm}')" title="إزالة من الغروب">🚫</button>
+          </div>
+        </div>`;
+      }).join("");
+    }
+  }
+}
+
+async function setGroupTitle() {
+  if (!_activeThread) return;
+  const newName = document.getElementById("gipNewName").value.trim();
+  if (!newName) { toast("أدخل اسماً","error"); return; }
+  const r = await apiFetch("/api/messenger/set-title", { method:"POST", body:JSON.stringify({ threadID: _activeThread.tid, title: newName }) });
+  if (r.ok) {
+    toast("✅ تم تغيير الاسم","success");
+    _activeThread.name = newName;
+    setText("chatHdrName", newName);
+    setText("gipNameDisplay", newName);
+    const t = _messengerThreads.find(x => x.tid === _activeThread.tid);
+    if (t) { t.name = newName; filterThreads(); }
+  } else toast("❌ " + r.error, "error");
+}
+
+async function changeGroupImage() {
+  if (!_activeThread) return;
+  const input = document.createElement("input");
+  input.type = "file"; input.accept = "image/*";
+  input.onchange = async () => {
+    const file = input.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async e => {
+      const dataUrl = e.target.result;
+      const base64 = dataUrl.split(",")[1];
+      const tid = _activeThread.tid;
+
+      // Optimistic local update
+      _applyThreadImage(dataUrl, tid);
+      toast("⏳ جاري رفع صورة الغروب…", "warn", 6000);
+
+      const r = await apiFetch("/api/messenger/set-image", {
+        method:"POST",
+        body: JSON.stringify({ threadID: tid, data: base64, filename: file.name })
+      });
+      if (r.ok) toast("✅ تم تغيير صورة الغروب","success");
+      else {
+        toast("❌ " + (r.error||"فشل تغيير الصورة"), "error");
+        // Revert local update
+        _applyThreadImage("", tid);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+async function promptNickname(userID, userName) {
+  const nick = prompt(`الكنية الجديدة لـ ${userName}:`);
+  if (nick === null) return;
+  const r = await apiFetch("/api/messenger/set-nick", { method:"POST", body:JSON.stringify({ threadID: _activeThread.tid, userID, nickname: nick }) });
+  if (r.ok) { toast("✅ تم تغيير الكنية","success"); loadThreadInfo(); }
+  else toast("❌ " + r.error, "error");
+}
+
+async function kickMember(userID, userName) {
+  if (!confirm(`إزالة ${userName} من الغروب؟`)) return;
+  const r = await apiFetch("/api/messenger/kick", { method:"POST", body:JSON.stringify({ threadID: _activeThread.tid, userID }) });
+  if (r.ok) { toast("✅ تم الإزالة","success"); loadThreadInfo(); }
+  else toast("❌ " + r.error, "error");
+}
+
+async function addMemberToGroup() {
+  if (!_activeThread) return;
+  const uid = document.getElementById("gipAddUID").value.trim().replace(/\D/g,"");
+  if (!uid) { toast("أدخل UID صحيح","error"); return; }
+  const r = await apiFetch("/api/messenger/add-member", { method:"POST", body:JSON.stringify({ threadID: _activeThread.tid, userID: uid }) });
+  if (r.ok) { toast("✅ تم الإضافة","success"); document.getElementById("gipAddUID").value=""; loadThreadInfo(); }
+  else toast("❌ " + r.error, "error");
+}
+
+async function sendBroadcast() {
+  if (!_activeThread) return;
+  const msg = document.getElementById("gipBroadcastMsg").value.trim();
+  if (!msg) { toast("اكتب رسالة","error"); return; }
+  const r = await apiFetch("/api/messenger/send", { method:"POST", body:JSON.stringify({ threadID: _activeThread.tid, body: msg }) });
+  if (r.ok) { toast("✅ تم الإرسال","success"); document.getElementById("gipBroadcastMsg").value=""; }
+  else toast("❌ " + r.error, "error");
+}
+
+/* ─── Helpers ─────────────────────────────────────── */
+function esc(s) {
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function relativeTime(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return "الآن";
+  if (diff < 3600000) return Math.floor(diff/60000) + "د";
+  if (diff < 86400000) return Math.floor(diff/3600000) + "س";
+  return Math.floor(diff/86400000) + "ي";
+}
+function toast(msg, type = "success", dur = 3000) {
+  const c = document.getElementById("toast-container");
+  const t = document.createElement("div");
+  t.className = "toast " + type; t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = "toastIn .25s ease reverse forwards";
+    setTimeout(() => t.remove(), 250);
+  }, dur);
+}
+
+/* ═══════════════════════════════════════════════════
+   ANGEL BACKGROUNDS — per-tab theme system
+   ═══════════════════════════════════════════════════ */
+const TAB_THEMES = {
+  control:    { img:"/angel.png",  tint:"rgba(10,132,255,.08)",  orbColor:"#0A84FF" },
+  messenger:  { img:"/angel2.png", tint:"rgba(191,90,242,.10)", orbColor:"#BF5AF2" },
+  cookies:    { img:"/angel.png",  tint:"rgba(255,159,10,.07)",  orbColor:"#FF9F0A" },
+  commands:   { img:"/angel2.png", tint:"rgba(50,215,75,.07)",   orbColor:"#32D74B" },
+  activation: { img:"/angel.png",  tint:"rgba(90,200,250,.07)",  orbColor:"#5AC8FA" },
+  editor:     { img:"/angel2.png", tint:"rgba(10,132,255,.09)",  orbColor:"#0A84FF" },
+  protection: { img:"/angel.png",  tint:"rgba(50,215,75,.09)",   orbColor:"#32D74B" },
+  settings:   { img:"/angel2.png", tint:"rgba(255,69,58,.06)",   orbColor:"#FF453A" },
+  messages:   { img:"/angel.png",  tint:"rgba(191,90,242,.08)",  orbColor:"#BF5AF2" },
+  logs:       { img:"/angel2.png", tint:"rgba(255,214,10,.07)",  orbColor:"#FFD60A" },
+  ai:         { img:"/angel.png",  tint:"rgba(50,215,75,.08)",   orbColor:"#32D74B" },
+  files:      { img:"/angel2.png", tint:"rgba(90,200,250,.08)",  orbColor:"#5AC8FA" },
+  railway:    { img:"/angel.png",  tint:"rgba(99,102,241,.1)",   orbColor:"#6366F1" },
+};
+
+function updateTabBackground(tab) {
+  const theme = TAB_THEMES[tab] || TAB_THEMES.control;
+  const layer = document.getElementById("bgAngelLayer");
+  const tint  = document.getElementById("bgTabTint");
+  if (layer) {
+    layer.style.backgroundImage = `url('${theme.img}')`;
+    layer.classList.add("visible");
+  }
+  if (tint) tint.style.background = theme.tint;
+  // Animate particles to theme color
+  document.querySelectorAll(".bg-particle").forEach(p => p.classList.add("visible"));
+}
+
+/* ═══════════════════════════════════════════════════
+   SWIPE GESTURE — navigate tabs by swiping left/right
+   ═══════════════════════════════════════════════════ */
+const TAB_ORDER = ["control","messenger","cookies","commands","activation","editor","protection","settings","messages","logs","ai","files","railway"];
+
+let _touchStartX = 0, _touchStartY = 0, _touchStartTime = 0;
+let _swipeHintTimer = null;
+
+document.addEventListener("touchstart", e => {
+  _touchStartX = e.changedTouches[0].screenX;
+  _touchStartY = e.changedTouches[0].screenY;
+  _touchStartTime = Date.now();
+}, { passive:true });
+
+document.addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].screenX - _touchStartX;
+  const dy = e.changedTouches[0].screenY - _touchStartY;
+  const dt = Date.now() - _touchStartTime;
+
+  // Must be fast enough, horizontal enough, and long enough
+  if (dt > 900) return;                          // too slow
+  if (Math.abs(dx) < 45) return;                // too short
+  if (Math.abs(dy) > Math.abs(dx) * 1.1) return; // too vertical
+
+  // Don't swipe inside messenger chat messages
+  const target = e.target;
+  if (target.closest(".chat-messages") || target.closest(".log-box") ||
+      target.closest("textarea") || target.closest("input") || target.closest(".messenger-sidebar")) return;
+
+  const curIdx = TAB_ORDER.indexOf(_prevTab);
+  if (curIdx === -1) return;
+
+  // RTL: swipe right → previous (lower index), swipe left → next (higher index)
+  if (dx > 0 && curIdx > 0) {
+    const nextTab = TAB_ORDER[curIdx - 1];
+    switchTab(nextTab);
+    showSwipeHint("← " + getTabLabel(nextTab));
+  } else if (dx < 0 && curIdx < TAB_ORDER.length - 1) {
+    const nextTab = TAB_ORDER[curIdx + 1];
+    switchTab(nextTab);
+    showSwipeHint(getTabLabel(nextTab) + " →");
+  }
+}, { passive:true });
+
+function showSwipeHint(text) {
+  const el = document.getElementById("swipeHint");
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add("show");
+  clearTimeout(_swipeHintTimer);
+  _swipeHintTimer = setTimeout(() => el.classList.remove("show"), 900);
+}
+
+const TAB_LABELS = {
+  control:"الرئيسية", messenger:"مسنجر", cookies:"كوكيز", commands:"أوامر",
+  activation:"تفعيل", editor:"محرر", protection:"حماية",
+  settings:"إعدادات", messages:"رسائل", logs:"سجلات",
+  ai:"ذكاء AI", files:"ملفات", railway:"Railway 🚀"
+};
+function getTabLabel(tab) { return TAB_LABELS[tab] || tab; }
+
+/* ─── Init ───────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   AI — توليد الأوامر بالذكاء الاصطناعي (Claude)
+   ═══════════════════════════════════════════════════ */
+let _aiCtxFiles   = [];
+let _aiChatHistory= [];
+let _currentFile  = null;
+let _fileTree     = [];
+
+async function aiLoadProvider() {
+  try {
+    const r = await api("/api/ai/provider","GET");
+    if (!r.ok) return;
+    const icons = { anthropic:"🟣", groq:"🟢", free:"🔵" };
+    document.getElementById("aiProviderIcon").textContent = icons[r.provider] || "🤖";
+    document.getElementById("aiProviderName").textContent = r.name;
+    if (r.provider === "free") {
+      document.getElementById("aiProviderTag").textContent = "✅ مجاني بدون key";
+      document.getElementById("aiProviderTag").style.background = "rgba(10,132,255,.15)";
+      document.getElementById("aiProviderTag").style.color = "#0a84ff";
+      document.getElementById("aiProviderTag").style.borderColor = "rgba(10,132,255,.3)";
+    }
+  } catch(_) {}
+}
+
+async function aiGenerate() {
+  const desc = document.getElementById("aiDesc").value.trim();
+  if (!desc) { toast("اكتب وصفاً للأمر أولاً","error"); return; }
+  document.getElementById("aiLoading").classList.remove("hidden");
+  document.getElementById("aiResultCard").style.display = "none";
+  try {
+    const r = await api("/api/ai/generate","POST",{ description: desc, contextFiles: _aiCtxFiles });
+    if (!r.ok) {
+      const errMsg = r.error === "rate_limit"
+        ? "⏱️ حدّ الطلبات المجانية — انتظر 10 ثوانٍ وأعد المحاولة (أو أضف مفتاح Groq من الإعدادات للاستخدام غير المحدود)"
+        : (r.error||"خطأ في التوليد");
+      toast(errMsg, "error");
+    } else {
+      document.getElementById("aiCodePre").textContent = r.code;
+      const nameMatch = r.code.match(/name\s*:\s*["'`]([^"'`]+)["'`]/);
+      if (nameMatch) document.getElementById("aiCmdName").value = nameMatch[1].toLowerCase().replace(/[^a-z0-9_-]/g,"");
+      const pNames = { anthropic:"Claude (Anthropic)", groq:"Llama 3.3 (Groq)", free:"GPT-4o (Pollinations — مجاني)" };
+      document.getElementById("aiResultProvider").textContent = "🤖 " + (pNames[r.provider] || r.provider || "");
+      document.getElementById("aiResultCard").style.display = "";
+      toast("✅ تم التوليد بنجاح","ok");
+    }
+  } catch(e){ toast("خطأ: "+e.message,"error"); }
+  document.getElementById("aiLoading").classList.add("hidden");
+}
+
+function aiRegenerate() {
+  document.getElementById("aiResultCard").style.display = "none";
+  aiGenerate();
+}
+
+async function aiSaveCmd() {
+  const name = document.getElementById("aiCmdName").value.trim();
+  const code = document.getElementById("aiCodePre").textContent;
+  if (!name) { toast("أدخل اسم الأمر","error"); return; }
+  if (!code) { toast("لا يوجد كود لحفظه","error"); return; }
+  const r = await api("/api/ai/save-command","POST",{ name, code });
+  if (r.ok) toast(r.message||"✅ تم الحفظ","ok");
+  else toast(r.error||"فشل الحفظ","error");
+}
+
+function aiCopyCode() {
+  const code = document.getElementById("aiCodePre").textContent;
+  navigator.clipboard?.writeText(code).then(()=>toast("تم النسخ","ok")).catch(()=>toast("لا يدعم النسخ","error"));
+}
+
+async function saveAIKeys() {
+  const groq = document.getElementById("cfg-groqKey").value.trim();
+  const anthropic = document.getElementById("cfg-anthropicKey").value.trim();
+  const hint = document.getElementById("ai-keys-hint");
+  const pairs = {};
+  if (groq) pairs["GROQ_API_KEY"] = groq;
+  if (anthropic) pairs["ANTHROPIC_API_KEY"] = anthropic;
+  if (!Object.keys(pairs).length) { hint.textContent = "⚠️ لم تُدخل أي مفتاح"; hint.style.color="var(--orange)"; return; }
+  try {
+    const r = await api("/api/env/set","POST", { pairs });
+    if (r.ok) {
+      hint.textContent = "✅ تم الحفظ — سيُطبَّق عند إعادة تشغيل السيرفر";
+      hint.style.color="var(--green)";
+      document.getElementById("cfg-groqKey").value = "";
+      document.getElementById("cfg-anthropicKey").value = "";
+      // refresh provider badge
+      _tabInitDone.delete("ai");
+      setTimeout(aiLoadProvider, 500);
+    } else { hint.textContent = "❌ " + (r.error||"فشل"); hint.style.color="var(--red)"; }
+  } catch(e) { hint.textContent = "❌ "+e.message; hint.style.color="var(--red)"; }
+}
+
+function aiChat() {
+  const card = document.getElementById("aiChatCard");
+  card.style.display = card.style.display === "none" ? "" : "none";
+  if (card.style.display !== "none") document.getElementById("aiChatInput").focus();
+}
+
+async function aiSendChat() {
+  const input = document.getElementById("aiChatInput");
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = "";
+  const box = document.getElementById("aiChatMsgs");
+  const addBubble = (txt, role) => {
+    const d = document.createElement("div");
+    d.className = "ai-chat-bubble " + role;
+    d.textContent = txt;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+  };
+  addBubble(msg, "user");
+  _aiChatHistory.push({ role:"user", content: msg });
+  const thincavorEl = document.createElement("div");
+  thincavorEl.className = "ai-chat-bubble ai";
+  thincavorEl.innerHTML = '<div class="ai-loading" style="padding:4px 0"><div class="ai-loading-dot"></div><div class="ai-loading-dot"></div><div class="ai-loading-dot"></div></div>';
+  box.appendChild(thincavorEl);
+  box.scrollTop = box.scrollHeight;
+  try {
+    const r = await api("/api/ai/chat","POST",{ message: msg, history: _aiChatHistory.slice(-10) });
+    box.removeChild(thincavorEl);
+    if (r.ok) {
+      addBubble(r.reply, "ai");
+      _aiChatHistory.push({ role:"assistant", content: r.reply });
+    } else {
+      addBubble("❌ " + (r.error||"خطأ"), "ai");
+    }
+  } catch(e) {
+    try { box.removeChild(thincavorEl); } catch(_) {}
+    addBubble("❌ " + e.message, "ai");
+  }
+}
+
+function aiAddCtxFile(filePath) {
+  if (!_aiCtxFiles.includes(filePath)) {
+    _aiCtxFiles.push(filePath);
+    renderAICtxChips();
+    toast("تمت إضافة الملف كسياق للـ AI","ok",1500);
+  }
+}
+
+function renderAICtxChips() {
+  const box = document.getElementById("aiCtxChips");
+  if (!box) return;
+  box.innerHTML = _aiCtxFiles.map(f => `
+    <div class="ai-ctx-chip selected">
+      📄 ${f.split("/").pop()}
+      <button class="ai-ctx-chip-rm" onclick="_aiCtxFiles.splice(_aiCtxFiles.indexOf('${f}'),1);renderAICtxChips()">×</button>
+    </div>`).join("");
+}
+
+function addFileToAICtx() {
+  if (_currentFile) aiAddCtxFile(_currentFile);
+  else toast("افتح ملفاً أولاً","error");
+}
+
+/* ═══════════════════════════════════════════════════
+   File Browser
+   ═══════════════════════════════════════════════════ */
+async function loadFileTree() {
+  const treeEl = document.getElementById("fileTree");
+  if (!treeEl) return;
+  treeEl.innerHTML = '<div style="color:var(--t3);font-size:12px;padding:16px;text-align:center">جاري التحميل…</div>';
+  try {
+    const r = await api("/api/files/tree","GET");
+    if (!r.ok) { treeEl.innerHTML = `<div style="color:var(--red);font-size:11px;padding:12px">${r.error}</div>`; return; }
+    _fileTree = r.tree;
+    treeEl.innerHTML = renderFileTree(r.tree);
+    attachTreeEvents(treeEl);
+  } catch(e) { treeEl.innerHTML = `<div style="color:var(--red);font-size:11px;padding:12px">${e.message}</div>`; }
+}
+
+const EXT_ICON = { ".js":"🟨",".json":"🔵",".html":"🌐",".css":"🎨",".md":"📝",".txt":"📄",".yml":"⚙️",".yaml":"⚙️",".env":"🔐" };
+
+function renderFileTree(nodes, depth=0) {
+  return nodes.map(n => {
+    if (n.type === "dir") {
+      const ch = renderFileTree(n.children||[], depth+1);
+      return `<div class="ft-dir" data-dir="${n.path}">
+        <div class="ft-dir-label">
+          <span>📂 ${n.name}</span>
+        </div>
+        <div class="ft-dir-children" style="display:${depth<2?'block':'none'}">${ch}</div>
+      </div>`;
+    } else {
+      const ic = EXT_ICON[n.ext] || "📄";
+      return `<div class="ft-file" data-file="${n.path}">${ic} ${n.name}</div>`;
+    }
+  }).join("");
+}
+
+function attachTreeEvents(root) {
+  root.querySelectorAll(".ft-dir-label").forEach(el => {
+    el.addEventListener("click", () => {
+      const children = el.nextElementSibling;
+      if (children) children.style.display = children.style.display === "none" ? "block" : "none";
+    });
+  });
+  root.querySelectorAll(".ft-file").forEach(el => {
+    el.addEventListener("click", () => {
+      root.querySelectorAll(".ft-file").forEach(f => f.classList.remove("active"));
+      el.classList.add("active");
+      openFile(el.dataset.file);
+    });
+  });
+}
+
+async function openFile(filePath) {
+  const editor = document.getElementById("filesEditor");
+  const pathEl  = document.getElementById("filesEditorPath");
+  if (!editor || !filePath) return;
+  editor.value = "جاري التحميل…";
+  editor.disabled = true;
+  try {
+    const r = await api(`/api/files/read?path=${encodeURIComponent(filePath)}`, "GET");
+    if (!r.ok) { toast(r.error||"فشل القراءة","error"); editor.value = ""; return; }
+    editor.value = r.content;
+    editor.disabled = false;
+    _currentFile = filePath;
+    pathEl.textContent = filePath;
+    document.getElementById("btnSaveFile").style.display = "";
+    document.getElementById("btnDeleteFile").style.display = "";
+    document.getElementById("btnAddToAI").style.display = "";
+    editor.focus();
+  } catch(e) { toast(e.message,"error"); editor.value = ""; editor.disabled = true; }
+}
+
+async function saveCurrentFile() {
+  if (!_currentFile) return;
+  const editor = document.getElementById("filesEditor");
+  const content = editor.value;
+  const r = await api("/api/files/write","POST",{ path: _currentFile, content });
+  if (r.ok) toast("✅ تم الحفظ","ok");
+  else toast(r.error||"فشل الحفظ","error");
+}
+
+async function deleteCurrentFile() {
+  if (!_currentFile) return;
+  if (!confirm(`هل أنت متأكد من حذف: ${_currentFile}؟`)) return;
+  const r = await api(`/api/files/delete?path=${encodeURIComponent(_currentFile)}`,"DELETE");
+  if (r.ok) {
+    toast("تم الحذف","ok");
+    document.getElementById("filesEditor").value = "";
+    document.getElementById("filesEditor").disabled = true;
+    document.getElementById("filesEditorPath").textContent = "اختر ملفاً";
+    document.getElementById("btnSaveFile").style.display = "none";
+    document.getElementById("btnDeleteFile").style.display = "none";
+    document.getElementById("btnAddToAI").style.display = "none";
+    _currentFile = null;
+    loadFileTree();
+  } else toast(r.error||"فشل الحذف","error");
+}
+
+async function filesNewFile() {
+  const name = prompt("اسم الملف الجديد (مع المسار، مثل: src/commands/test.js):");
+  if (!name) return;
+  const r = await api("/api/files/new","POST",{ path: name.trim() });
+  if (r.ok) { toast("✅ تم الإنشاء","ok"); await loadFileTree(); openFile(name.trim()); }
+  else toast(r.error||"فشل الإنشاء","error");
+}
+
+/* ─── Tab init hooks ─── */
+const _origSwitchTab = typeof switchTab === "function" ? switchTab : null;
+const _tabInitDone = new Set();
+function switchTabHook(tab) {
+  if (_origSwitchTab) _origSwitchTab(tab);
+  if (tab === "files" && !_tabInitDone.has("files")) {
+    _tabInitDone.add("files");
+    loadFileTree();
+  }
+  if (tab === "railway" && !_tabInitDone.has("railway")) {
+    _tabInitDone.add("railway");
+    initRailwayTab();
+  }
+  if (tab === "addlock" && !_tabInitDone.has("addlock")) {
+    _tabInitDone.add("addlock");
+    loadAddlockPage();
+  }
+  if (tab === "ai" && !_tabInitDone.has("ai")) {
+    _tabInitDone.add("ai");
+    aiLoadProvider();
+    // Pre-load context file list from recent commands
+    fetch("/api/files/tree", { headers:{ "Authorization": "Bearer "+_token }})
+      .then(r=>r.json()).then(r=>{
+        if (r.ok && r.tree) {
+          const cmdsDir = r.tree.find(n=>n.name==="src")?.children?.find(n=>n.name==="commands")?.children||[];
+          const chips = document.getElementById("aiCtxChips");
+          if (chips && cmdsDir.length && !chips.children.length) {
+            cmdsDir.slice(0,8).forEach(f => {
+              const d = document.createElement("div");
+              d.className = "ai-ctx-chip";
+              d.textContent = "📄 "+f.name;
+              d.title = "انقر للإضافة كسياق";
+              d.onclick = () => { aiAddCtxFile(f.path); d.classList.add("selected"); };
+              chips.appendChild(d);
+            });
+          }
+        }
+      }).catch(()=>{});
+  }
+}
+// Override all tab click handlers to hook into our logic
+document.querySelectorAll("[data-tab]").forEach(btn => {
+  btn.addEventListener("click", () => switchTabHook(btn.dataset.tab));
+});
+
+/* ═══════════════════════════════════════════════════
+   RAILWAY + GITHUB MODULE
+   ═══════════════════════════════════════════════════ */
+let _hostMode = localStorage.getItem("host_mode") || "railway";
+
+function initRailwayTab() {
+  const ghT = localStorage.getItem("gh_token") || "";
+  const rlwT = localStorage.getItem("rlw_token") || "";
+  const rlwP = localStorage.getItem("rlw_projid") || "";
+  const ghInput = document.getElementById("ghTokenInput");
+  const rlwTInput = document.getElementById("rlwApiToken");
+  const rlwPInput = document.getElementById("rlwProjectId");
+  if (ghInput && ghT) ghInput.value = ghT;
+  if (rlwTInput && rlwT) rlwTInput.value = rlwT;
+  if (rlwPInput && rlwP) rlwPInput.value = rlwP;
+  setHostMode(_hostMode, false);
+}
+
+function setHostMode(mode, save=true) {
+  _hostMode = mode;
+  if (save) localStorage.setItem("host_mode", mode);
+  ["railway","replit","phone"].forEach(m => {
+    const el = document.getElementById("mcard-"+m);
+    if (!el) return;
+    el.className = "mode-card";
+    if (m === mode) el.classList.add(m === "railway" ? "active-rail" : m === "phone" ? "active-phone" : "active");
+  });
+  const box = document.getElementById("hostModeContent");
+  if (!box) return;
+  if (mode === "railway") {
+    box.innerHTML = `<div style="padding:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:12px;font-size:12px;color:var(--t2);">
+      🚂 وضع Railway مفعّل — اضبط إعدادات Railway أدناه واضغط "فحص الحالة"
+    </div>`;
+  } else if (mode === "replit") {
+    box.innerHTML = `<div style="padding:10px;background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.2);border-radius:12px;font-size:12px;color:var(--t2);">
+      🔵 أنت الآن على Replit — البوت يعمل هنا مباشرةً. لنشره بشكل دائم استخدم Railway.
+    </div>`;
+  } else if (mode === "phone") {
+    box.innerHTML = `<div style="padding:10px;background:rgba(50,215,75,.07);border:1px solid rgba(50,215,75,.18);border-radius:12px;font-size:12px;color:var(--t2);">
+      📱 وضع الهاتف — تأكد أن البوت يعمل عبر Termux على نفس الجهاز. اقرأ الدليل أدناه.
+    </div>`;
+  }
+}
+
+function addPushLog(msg, type="") {
+  const box = document.getElementById("pushLog");
+  if (!box) return;
+  box.classList.add("visible");
+  const span = document.createElement("span");
+  span.className = "pll" + (type ? " "+type : "");
+  span.textContent = new Date().toTimeString().slice(0,8) + "  " + msg;
+  box.appendChild(span);
+  box.scrollTop = box.scrollHeight;
+}
+
+function copyText(el) {
+  const text = el.value || el.textContent;
+  navigator.clipboard?.writeText(text).then(() => toast("📋 تم النسخ","success",1500)).catch(() => toast("تعذر النسخ","error"));
+}
+
+async function pushToGithub() {
+  const token = (document.getElementById("ghTokenInput")?.value || "").trim();
+  if (!token) { toast("❌ أدخل GitHub Token أولاً","error"); return; }
+  const scope = document.getElementById("ghFilesScope")?.value || "bot";
+  const msg = (document.getElementById("ghCommitMsg")?.value?.trim()) || "🤖 Cavor-Xv3-11/x - Auto Update";
+  const btn = document.getElementById("btnPushGithub");
+  btn.disabled = true; btn.textContent = "⏳ جاري الرفع…";
+  const box = document.getElementById("pushLog");
+  if (box) { box.innerHTML = ""; box.classList.add("visible"); }
+  addPushLog("📦 بدء عملية الرفع إلى GitHub…", "info");
+  addPushLog("🔑 التحقق من التوكن…", "info");
+
+  try {
+    const r = await apiFetch("/api/github/push", {
+      method: "POST",
+      body: JSON.stringify({ token, repo: "castrolmocro/divid-apk", scope, message: msg })
+    });
+    if (r.ok) {
+      (r.log || []).forEach(l => addPushLog(l.msg, l.type));
+      addPushLog("✅ تم الرفع بنجاح! SHA: " + (r.sha || "—"), "ok");
+      toast("✅ تم الرفع على GitHub بنجاح!","success");
+    } else {
+      (r.log || []).forEach(l => addPushLog(l.msg, l.type));
+      addPushLog("❌ فشل: " + (r.error || "خطأ غير معروف"), "err");
+      toast("❌ " + (r.error || "فشل الرفع"), "error");
+    }
+  } catch(e) {
+    addPushLog("❌ خطأ: " + e.message, "err");
+    toast("❌ خطأ في الاتصال","error");
+  }
+  btn.disabled = false; btn.textContent = "📤 رفع على GitHub";
+}
+
+async function checkGithubRepo() {
+  const token = (document.getElementById("ghTokenInput")?.value || "").trim();
+  const box = document.getElementById("repoInfoBox");
+  if (!box) return;
+  box.style.display = "block";
+  box.innerHTML = '<div style="color:var(--t2);font-size:12px">⏳ جاري الفحص…</div>';
+  try {
+    const r = await apiFetch("/api/github/repo-info?token="+encodeURIComponent(token)+"&repo=castrolmocro/divid-apk");
+    if (r.ok && r.info) {
+      const i = r.info;
+      box.innerHTML = `<div style="background:rgba(50,215,75,.07);border:1px solid rgba(50,215,75,.18);border-radius:12px;padding:12px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">✅ ${i.full_name}</div>
+        <div style="font-size:11px;color:var(--t2);">⭐ ${i.stargazers_count} &nbsp;|&nbsp; 🍴 ${i.forks_count} &nbsp;|&nbsp; 📝 ${i.default_branch}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;">آخر تحديث: ${new Date(i.updated_at).toLocaleDateString("ar")}</div>
+      </div>`;
+    } else {
+      box.innerHTML = `<div style="color:var(--red);font-size:12px;">❌ ${r.error || "تعذر الفحص — تأكد من التوكن والريبو"}</div>`;
+    }
+  } catch(e) {
+    box.innerHTML = `<div style="color:var(--red);font-size:12px;">❌ خطأ: ${e.message}</div>`;
+  }
+}
+
+async function rlwCheckStatus() {
+  const token = (document.getElementById("rlwApiToken")?.value || "").trim();
+  const projectId = (document.getElementById("rlwProjectId")?.value || "").trim();
+  const box = document.getElementById("rlwStatusBox");
+  if (!box) return;
+  if (!token || !projectId) { box.innerHTML = '<div style="color:var(--yellow);font-size:12px;">⚠️ أدخل API Token و Project ID أولاً</div>'; return; }
+  box.innerHTML = '<div style="color:var(--t2);font-size:12px">⏳ جاري الفحص…</div>';
+  const r = await apiFetch(`/api/railway/status?token=${encodeURIComponent(token)}&projectId=${encodeURIComponent(projectId)}`);
+  if (r.ok) {
+    const s = r.status || {};
+    const sc = s.status === "SUCCESS" ? "dep-ok" : s.status === "FAILED" ? "dep-fail" : s.status === "BUILDING" ? "dep-building" : "dep-idle";
+    box.innerHTML = `<div style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.18);border-radius:12px;padding:12px;">
+      <div class="rlw-status-row"><span class="rlw-srl">الحالة</span><span class="dep-status ${sc}">${s.status||"—"}</span></div>
+      <div class="rlw-status-row"><span class="rlw-srl">الـ Deployment</span><span class="rlw-srr">${s.deploymentId||"—"}</span></div>
+      <div class="rlw-status-row"><span class="rlw-srl">الرابط</span><span class="rlw-srr">${s.url ? `<a href="https://${s.url}" target="_blank" style="color:var(--blue)">${s.url}</a>` : "—"}</span></div>
+      ${s.createdAt ? `<div class="rlw-status-row"><span class="rlw-srl">آخر نشر</span><span class="rlw-srr">${new Date(s.createdAt).toLocaleString("ar")}</span></div>` : ""}
+    </div>`;
+    if (s.url) { const el = document.getElementById("rlwUrlCopy"); if (el) el.textContent = "https://"+s.url; }
+  } else {
+    box.innerHTML = `<div style="color:var(--red);font-size:12px;">❌ ${r.error||"فشل الاتصال بـ Railway"}</div>`;
+  }
+}
+
+async function rlwTriggerDeploy() {
+  const token = (document.getElementById("rlwApiToken")?.value || "").trim();
+  const projectId = (document.getElementById("rlwProjectId")?.value || "").trim();
+  if (!token || !projectId) { toast("❌ أدخل API Token و Project ID","error"); return; }
+  const r = await apiFetch("/api/railway/deploy", { method:"POST", body:JSON.stringify({ token, projectId }) });
+  if (r.ok) { toast("🚀 تم تشغيل الـ Deploy!","success"); setTimeout(rlwCheckStatus, 3000); }
+  else toast("❌ " + (r.error||"فشل"), "error");
+}
+
+/* ════ ADDLOCK PAGE ════════════════════════════════════════════════ */
+let _addlockGroups  = [];
+let _addlockConfig  = {};
+
+async function loadAddlockPage() {
+  const list = document.getElementById("addlockGroupsList");
+  if (!list) return;
+  list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);">⏳ جاري التحميل…</div>';
+
+  const [tRes, cRes] = await Promise.all([
+    apiFetch("/api/addlock/threads"),
+    apiFetch("/api/addlock"),
+  ]);
+
+  _addlockConfig = cRes.ok ? (cRes.config || {}) : {};
+  _addlockGroups = tRes.ok ? (tRes.threads || []) : [];
+
+  // أضف المجموعات الموجودة في الكونفيج لكنها غير موجودة في allThreadData
+  for (const [tid, data] of Object.entries(_addlockConfig)) {
+    if (!_addlockGroups.find(g => g.tid === tid)) {
+      _addlockGroups.push({ tid, name: `غروب ${tid}`, memberCount: 0, imageSrc: null });
+    }
+  }
+
+  renderAddlockGroups();
+}
+
+function filterAddlockGroups() {
+  renderAddlockGroups();
+}
+
+function renderAddlockGroups() {
+  const list   = document.getElementById("addlockGroupsList");
+  if (!list) return;
+  const q      = (document.getElementById("addlockSearch")?.value || "").toLowerCase();
+  const groups = _addlockGroups.filter(g =>
+    !q || g.name.toLowerCase().includes(q) || g.tid.includes(q)
+  );
+
+  if (!groups.length) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--t3);">لا توجد مجموعات — تأكد أن البوت مشغّل وفي مجموعات</div>';
+    return;
+  }
+
+  list.innerHTML = groups.map(g => {
+    const cfg     = _addlockConfig[g.tid] || {};
+    const enabled = !!cfg.enabled;
+    const links   = cfg.links || [];
+    const initials = (g.name || "G").charAt(0).toUpperCase();
+    const imgHtml = g.imageSrc
+      ? `<img src="${g.imageSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.parentElement.innerHTML='<span style=font-size:18px;font-weight:900>${initials}</span>'">`
+      : `<span style="font-size:18px;font-weight:900">${initials}</span>`;
+
+    return `
+<div class="card section" style="padding:0;overflow:hidden;" id="alcard-${g.tid}">
+  <!-- Group Header -->
+  <div style="display:flex;align-items:center;gap:12px;padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06);">
+    <div style="width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#0A84FF44,#BF5AF244);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;border:1.5px solid rgba(255,255,255,.12);">
+      ${imgHtml}
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.name}</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px;">${g.tid} · ${g.memberCount} عضو</div>
+    </div>
+    <!-- Toggle -->
+    <label class="toggle-wrap" style="flex-shrink:0;" onclick="toggleAddlock('${g.tid}', this)">
+      <input type="checkbox" ${enabled ? "checked" : ""} style="display:none;">
+      <div class="toggle-track ${enabled ? "on" : ""}">
+        <div class="toggle-thumb"></div>
+      </div>
+    </label>
+  </div>
+
+  <!-- Links Section -->
+  <div style="padding:12px 16px;">
+    <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">
+      🔗 حسابات الاستبدال (${links.length})
+    </div>
+    <div id="al-links-${g.tid}" style="display:flex;flex-direction:column;gap:7px;">
+      ${links.map((l, i) => `
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border-radius:10px;padding:8px 12px;">
+          <span style="width:20px;height:20px;border-radius:6px;background:rgba(10,132,255,.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">${i+1}</span>
+          <span style="flex:1;font-size:12px;font-family:monospace;color:var(--cyan);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${l}">${l}</span>
+          <button onclick="removeAddlockLink('${g.tid}',${i})" style="background:rgba(255,69,58,.15);border:none;color:var(--red);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>
+        </div>
+      `).join("")}
+    </div>
+    <!-- Add link input -->
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <input class="form-input" id="al-input-${g.tid}" placeholder="أدخل UID أو رابط فيسبوك…" style="flex:1;margin:0;font-size:12px;padding:9px 12px;" onkeydown="if(event.key==='Enter')addAddlockLink('${g.tid}')">
+      <button class="btn btn-blue" onclick="addAddlockLink('${g.tid}')" style="padding:9px 14px;font-size:12px;">＋ إضافة</button>
+    </div>
+  </div>
+</div>`;
+  }).join("");
+}
+
+async function toggleAddlock(tid, labelEl) {
+  const cb  = labelEl.querySelector("input");
+  const tr  = labelEl.querySelector(".toggle-track");
+  const cfg = _addlockConfig[tid] || {};
+  const newVal = !cfg.enabled;
+
+  const r = await apiFetch("/api/addlock", {
+    method: "POST",
+    body: JSON.stringify({ tid, enabled: newVal }),
+  });
+  if (r.ok) {
+    if (!_addlockConfig[tid]) _addlockConfig[tid] = { enabled: false, links: [] };
+    _addlockConfig[tid].enabled = newVal;
+    if (cb) cb.checked = newVal;
+    tr.className = "toggle-track" + (newVal ? " on" : "");
+    toast(newVal ? "✅ تم تفعيل AddLock" : "⏹ تم إيقاف AddLock", newVal ? "success" : "info", 1800);
+  } else {
+    toast("❌ " + (r.error || "فشل"), "error");
+    if (cb) cb.checked = !newVal; // تراجع
+  }
+}
+
+async function addAddlockLink(tid) {
+  const inp = document.getElementById("al-input-" + tid);
+  const val = (inp?.value || "").trim();
+  if (!val) return;
+
+  const cfg   = _addlockConfig[tid] || { enabled: false, links: [], index: 0 };
+  const links = [...(cfg.links || []), val];
+
+  const r = await apiFetch("/api/addlock", {
+    method: "POST",
+    body: JSON.stringify({ tid, links }),
+  });
+  if (r.ok) {
+    if (!_addlockConfig[tid]) _addlockConfig[tid] = { enabled: false, links: [], index: 0 };
+    _addlockConfig[tid].links = links;
+    if (inp) inp.value = "";
+    renderAddlockGroups();
+    toast("✅ تمت إضافة الرابط", "success", 1500);
+  } else {
+    toast("❌ " + (r.error || "فشل"), "error");
+  }
+}
+
+async function removeAddlockLink(tid, index) {
+  const cfg   = _addlockConfig[tid] || {};
+  const links = (cfg.links || []).filter((_, i) => i !== index);
+
+  const r = await apiFetch("/api/addlock", {
+    method: "POST",
+    body: JSON.stringify({ tid, links }),
+  });
+  if (r.ok) {
+    _addlockConfig[tid].links = links;
+    renderAddlockGroups();
+    toast("🗑 تم حذف الرابط", "info", 1500);
+  } else {
+    toast("❌ " + (r.error || "فشل"), "error");
+  }
+}
+
+/* ─── Service Worker ─── */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => {});
+}
+
+(async function init() {
+  // Show angel background particles immediately
+  setTimeout(() => {
+    document.querySelectorAll(".bg-particle").forEach(p => p.classList.add("visible"));
+    updateTabBackground("control");
+  }, 300);
+
+  if (_token) {
+    const ok = await checkAuth();
+    if (ok) { document.getElementById("login-screen").classList.add("hidden"); showApp(); }
+    else { _token = ""; localStorage.removeItem("cavor_token"); }
+  }
+})();
+</script>
+</body>
+</html>
