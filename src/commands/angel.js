@@ -1,6 +1,6 @@
 /**
- * CAVOR — Angel v6 — نظام الرسائل التلقائية الذكي
- * Copyright © 2026 Cavor
+ * KAYLATH — Angel v6 — نظام الرسائل التلقائية الذكي
+ * Copyright © 2026 Kaylath
  * ✦ يتوقف مؤقتاً بعد 3 رسائل متتالية بدون رد بشري
  * ✦ يستأنف عند أول رسالة بشرية
  * ✦ يبدأ عدّاد الخروج بعد التوقف
@@ -14,7 +14,7 @@ const path = require("path");
 
 const DATA = path.join(
   process.cwd(),
-  "database/data/cavorData.json"
+  "database/data/kaylathData.json"
 );
 
 const SILENCE_MS = 16 * 60 * 1000;
@@ -52,16 +52,16 @@ function rand(a, b) {
 if (!global.GoatBot)
   global.GoatBot = {};
 
-if (!global.GoatBot.cavorIntervals)
-  global.GoatBot.cavorIntervals = {};
+if (!global.GoatBot.kaylathIntervals)
+  global.GoatBot.kaylathIntervals = {};
 
-if (!global.GoatBot.cavorSilenceTimers)
-  global.GoatBot.cavorSilenceTimers = {};
+if (!global.GoatBot.kaylathSilenceTimers)
+  global.GoatBot.kaylathSilenceTimers = {};
 
-if (!global._cavorState)
-  global._cavorState = {};
+if (!global._kaylathState)
+  global._kaylathState = {};
 
-// _cavorState[tid] = {
+// _kaylathState[tid] = {
 //   consecutive,
 //   paused,
 //   pausedAt,
@@ -76,9 +76,9 @@ if (!global._cavorState)
 if (!global._msgListeners)
   global._msgListeners = [];
 
-if (!global._cavorListenerRegistered) {
+if (!global._kaylathListenerRegistered) {
 
-  global._cavorListenerRegistered = true;
+  global._kaylathListenerRegistered = true;
 
   global._msgListeners.push(
     ({ threadID, messageID }) => {
@@ -86,7 +86,7 @@ if (!global._cavorListenerRegistered) {
       const tid = String(threadID);
 
       const st =
-        global._cavorState[tid];
+        global._kaylathState[tid];
 
       if (!st)
         return;
@@ -145,18 +145,18 @@ function clearSilenceWatchdog(tid) {
 
   const timer =
     global.GoatBot
-      .cavorSilenceTimers?.[tid];
+      .kaylathSilenceTimers?.[tid];
 
   if (timer)
     clearTimeout(timer);
 
   if (
     global.GoatBot
-      .cavorSilenceTimers
+      .kaylathSilenceTimers
   ) {
 
     delete global.GoatBot
-      .cavorSilenceTimers[tid];
+      .kaylathSilenceTimers[tid];
   }
 }
 
@@ -172,11 +172,11 @@ function sendEscapeAndLeave(api, tid, st) {
 
   clearTimeout(
     global.GoatBot
-      .cavorIntervals[tid]
+      .kaylathIntervals[tid]
   );
 
   delete global.GoatBot
-    .cavorIntervals[tid];
+    .kaylathIntervals[tid];
 
   clearSilenceWatchdog(tid);
 
@@ -236,7 +236,7 @@ function sendEscapeAndLeave(api, tid, st) {
     } catch (error) {
 
       global.log?.warn?.(
-        "CAVOR",
+        "KAYLATH",
         `تعذر خروج البوت من ${tid}: ${error.message}`
       );
 
@@ -251,7 +251,7 @@ function sendEscapeAndLeave(api, tid, st) {
         save(data);
       }
 
-      delete global._cavorState[tid];
+      delete global._kaylathState[tid];
     }
 
   })();
@@ -267,7 +267,7 @@ function scheduleSilenceWatchdog(api, tid) {
   clearSilenceWatchdog(key);
 
   const st =
-    global._cavorState[key];
+    global._kaylathState[key];
 
   if (
     !st ||
@@ -289,18 +289,18 @@ function scheduleSilenceWatchdog(api, tid) {
     );
 
   global.GoatBot
-    .cavorSilenceTimers[key] =
+    .kaylathSilenceTimers[key] =
     setTimeout(
       async () => {
 
         delete global.GoatBot
-          .cavorSilenceTimers[key];
+          .kaylathSilenceTimers[key];
 
         const fresh =
           load()[key];
 
         const current =
-          global._cavorState[key];
+          global._kaylathState[key];
 
         if (
           !fresh?.active ||
@@ -345,11 +345,11 @@ function scheduleNext(api, tid, td) {
 
   clearTimeout(
     global.GoatBot
-      .cavorIntervals[tid]
+      .kaylathIntervals[tid]
   );
 
   delete global.GoatBot
-    .cavorIntervals[tid];
+    .kaylathIntervals[tid];
 
   if (
     !td?.active ||
@@ -360,10 +360,10 @@ function scheduleNext(api, tid, td) {
   }
 
   if (
-    !global._cavorState[tid]
+    !global._kaylathState[tid]
   ) {
 
-    global._cavorState[tid] = {
+    global._kaylathState[tid] = {
 
       consecutive: 0,
 
@@ -380,7 +380,7 @@ function scheduleNext(api, tid, td) {
   }
 
   if (
-    global._cavorState[tid].paused
+    global._kaylathState[tid].paused
   ) {
 
     return;
@@ -397,12 +397,12 @@ function scheduleNext(api, tid, td) {
     );
 
   global.GoatBot
-    .cavorIntervals[tid] =
+    .kaylathIntervals[tid] =
     setTimeout(
       async () => {
 
         delete global.GoatBot
-          .cavorIntervals[tid];
+          .kaylathIntervals[tid];
 
         const fresh =
           load()[tid];
@@ -411,7 +411,7 @@ function scheduleNext(api, tid, td) {
           return;
 
         const st =
-          global._cavorState[tid] ||
+          global._kaylathState[tid] ||
           {};
 
         // ── 3 رسائل متتالية ────────────────────────────────────────────────
@@ -423,7 +423,7 @@ function scheduleNext(api, tid, td) {
           st.paused = true;
           st.pausedAt = Date.now();
 
-          global._cavorState[tid] =
+          global._kaylathState[tid] =
             st;
 
           scheduleSilenceWatchdog(
@@ -461,7 +461,7 @@ function scheduleNext(api, tid, td) {
           st.consecutive =
             (st.consecutive || 0) + 1;
 
-          global._cavorState[tid] =
+          global._kaylathState[tid] =
             st;
 
         } catch (_) {}
@@ -480,7 +480,7 @@ function scheduleNext(api, tid, td) {
           st.paused = true;
           st.pausedAt = Date.now();
 
-          global._cavorState[tid] =
+          global._kaylathState[tid] =
             st;
 
           scheduleSilenceWatchdog(
@@ -509,14 +509,14 @@ function restoreAll(api) {
 
   if (
     global.GoatBot
-      ._cavorRestored
+      ._kaylathRestored
   ) {
 
     return;
   }
 
   global.GoatBot
-    ._cavorRestored = true;
+    ._kaylathRestored = true;
 
   const data = load();
 
@@ -531,10 +531,10 @@ function restoreAll(api) {
     ) {
 
       if (
-        !global._cavorState[tid]
+        !global._kaylathState[tid]
       ) {
 
-        global._cavorState[tid] = {
+        global._kaylathState[tid] = {
 
           consecutive: 0,
 
@@ -557,7 +557,7 @@ function restoreAll(api) {
       );
 
       if (
-        global._cavorState[tid]
+        global._kaylathState[tid]
           .paused
       ) {
 
@@ -585,7 +585,7 @@ module.exports = {
 
     version: "6.0",
 
-    author: "Cavor",
+    author: "Kaylath",
 
     countDown: 3,
 
@@ -594,7 +594,7 @@ module.exports = {
     category: "management",
 
     description:
-      "Cavor-Xv3-11/x — رسائل تلقائية مع مراقبة ذكية",
+      "Kaylath-Xv3-11/x — رسائل تلقائية مع مراقبة ذكية",
 
     guide: {
       en:
@@ -639,12 +639,12 @@ module.exports = {
       if (!td?.active) {
 
         return message.reply(
-          "🌙 CAVOR غير نشط في هذا الغروب."
+          "🌙 KAYLATH غير نشط في هذا الغروب."
         );
       }
 
       const st =
-        global._cavorState[tid] ||
+        global._kaylathState[tid] ||
         {};
 
       const mode =
@@ -654,7 +654,7 @@ module.exports = {
 
       return message.reply(
 
-        "╭─〔 ⚡ CAVOR 〕─╮\n" +
+        "╭─〔 ⚡ KAYLATH 〕─╮\n" +
 
         `📍 الحالة: ${mode}\n` +
 
@@ -664,7 +664,7 @@ module.exports = {
 
         `📨 المتتالي: ${st.consecutive || 0}/3\n\n` +
 
-        "👑 المطور: Cavor\n" +
+        "👑 المطور: Kaylath\n" +
 
         "╰────────────────╯"
 
@@ -682,15 +682,15 @@ module.exports = {
 
       clearTimeout(
         global.GoatBot
-          .cavorIntervals[tid]
+          .kaylathIntervals[tid]
       );
 
       delete global.GoatBot
-        .cavorIntervals[tid];
+        .kaylathIntervals[tid];
 
       clearSilenceWatchdog(tid);
 
-      delete global._cavorState[tid];
+      delete global._kaylathState[tid];
 
       if (data[tid]) {
 
@@ -702,9 +702,9 @@ module.exports = {
 
       return message.reply(
 
-        "🛑 تم تعطيل CAVOR في هذا الغروب.\n" +
+        "🛑 تم تعطيل KAYLATH في هذا الغروب.\n" +
         "⚙️ يمكنك تشغيله من جديد متى شئت.\n" +
-        "👑 Cavor"
+        "👑 Kaylath"
 
       );
     }
@@ -730,7 +730,7 @@ module.exports = {
         .join(" ")
         .trim() ||
       data[tid]?.message ||
-      "⚡ CAVOR هنا.";
+      "⚡ KAYLATH هنا.";
 
     const minS =
       parseInt(nums[0]) || 60;
@@ -760,7 +760,7 @@ module.exports = {
 
     // ── تهيئة الحالة ───────────────────────────────────────────────────────
 
-    global._cavorState[tid] = {
+    global._kaylathState[tid] = {
 
       consecutive: 0,
 
@@ -790,7 +790,7 @@ module.exports = {
 
     return message.reply(
 
-      "╭─〔 ⚡ CAVOR 〕─╮\n" +
+      "╭─〔 ⚡ KAYLATH 〕─╮\n" +
 
       "✅ تم تشغيل النظام بنجاح\n\n" +
 
@@ -804,7 +804,7 @@ module.exports = {
 
       "🌘 بعد 16 دقيقة من الصمت يرسل رسالة الهروب ويغادر\n\n" +
 
-      "👑 Cavor\n" +
+      "👑 Kaylath\n" +
 
       "╰────────────────╯"
 
