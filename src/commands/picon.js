@@ -1,11 +1,11 @@
 "use strict";
 
 /**
- * Cavor-Xv3-11/x — Photo Protection
+ * Kaylath-Xv3-11/x — Photo Protection
  * /picon — حماية صورة المجموعة
  * /picoff — إيقاف الحماية
  *
- * Copyright © 2026 Cavor
+ * Copyright © 2026 Kaylath
  */
 
 const fs   = require("fs-extra");
@@ -15,7 +15,7 @@ const path = require("path");
 // CONSTANTS
 // ══════════════════════════════════════════════════════════════════════════════
 
-const DATA = path.join(process.cwd(), "database/data/cavorData.json");
+const DATA = path.join(process.cwd(), "database/data/kaylathData.json");
 const PIC_CHECK_MS = 3000; // 3 ثوانٍ
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -179,7 +179,7 @@ module.exports = {
     name: "picon",
     aliases: ["picoff"],
     version: "1.0.0",
-    author: "Cavor",
+    author: "Kaylath",
     countDown: 3,
     role: 2,
     category: "management",
