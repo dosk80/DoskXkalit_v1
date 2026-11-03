@@ -4,16 +4,16 @@ const fs = require("fs-extra");
 const path = require("path");
 
 /*
- * Cavor-Xv3-11/x
- * Copyright © 2026 Cavor
+ * Kaylath-Xv3-11/x
+ * Copyright © 2026 Kaylath
  *
  * الأوامر:
- * /الوكس تشغيل [الرسالة]
- * /الوكس ايقاف
- * /الوكس شات
- * /الوكس نيم [الاسم]
- * /الوكس كنيات [الكنية]
- * /الوكس تنظيف
+ * /دوسك تشغيل [الرسالة]
+ * /دوسك ايقاف
+ * /دوسك شات
+ * /دوسك نيم [الاسم]
+ * /دوسك كنيات [الكنية]
+ * /دوسك تنظيف
  * /اضافة [ID]
  * /ازالة [ID]
  * /لعبة الكرامة [ID]
@@ -24,7 +24,7 @@ const path = require("path");
 
 const DATA = path.join(
   process.cwd(),
-  "database/data/cavorData.json"
+  "database/data/kaylathData.json"
 );
 
 const RESPONSE_DELAY_MS = 30 * 1000;
@@ -48,28 +48,28 @@ const ESCAPE_MESSAGE =
 // ══════════════════════════════════════════════════════════════════════════════
 
 const state =
-  global.__CAVOR_CAVOR_STATE ||
-  (global.__CAVOR_CAVOR_STATE = Object.create(null));
+  global.__KAYLATH_KAYLATH_STATE ||
+  (global.__KAYLATH_KAYLATH_STATE = Object.create(null));
 
 const gameState =
-  global.__CAVOR_CAVOR_GAME ||
-  (global.__CAVOR_CAVOR_GAME = Object.create(null));
+  global.__KAYLATH_KAYLATH_GAME ||
+  (global.__KAYLATH_KAYLATH_GAME = Object.create(null));
 
 const operationLocks =
-  global.__CAVOR_CAVOR_LOCKS ||
-  (global.__CAVOR_CAVOR_LOCKS = Object.create(null));
+  global.__KAYLATH_KAYLATH_LOCKS ||
+  (global.__KAYLATH_KAYLATH_LOCKS = Object.create(null));
 
 const processed =
-  global.__CAVOR_CAVOR_PROCESSED ||
-  (global.__CAVOR_CAVOR_PROCESSED = new Map());
+  global.__KAYLATH_KAYLATH_PROCESSED ||
+  (global.__KAYLATH_KAYLATH_PROCESSED = new Map());
 
 // ══════════════════════════════════════════════════════════════════════════════
 // NAME MONITORING STATE
 // ══════════════════════════════════════════════════════════════════════════════
 
 const nameMonitors =
-  global.__CAVOR_NAME_MONITORS ||
-  (global.__CAVOR_NAME_MONITORS = Object.create(null));
+  global.__KAYLATH_NAME_MONITORS ||
+  (global.__KAYLATH_NAME_MONITORS = Object.create(null));
 
 const NAME_CHECK_MS = 10 * 1000;
 
@@ -77,16 +77,16 @@ const NICK_CHECK_MS = 3500;
 const NICK_APPLY_DELAY_MS = 2000;
 
 const nicknameMonitors =
-  global.__CAVOR_NICKNAME_MONITORS ||
-  (global.__CAVOR_NICKNAME_MONITORS = Object.create(null));
+  global.__KAYLATH_NICKNAME_MONITORS ||
+  (global.__KAYLATH_NICKNAME_MONITORS = Object.create(null));
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CHAT SESSION STATE (الوكس شات)
+// CHAT SESSION STATE (دوسك شات)
 // ══════════════════════════════════════════════════════════════════════════════
 
 const chatSessions =
-  global.__CAVOR_CHAT_SESSIONS ||
-  (global.__CAVOR_CHAT_SESSIONS = new Map());
+  global.__KAYLATH_CHAT_SESSIONS ||
+  (global.__KAYLATH_CHAT_SESSIONS = new Map());
 
 const CHAT_SESSION_TIMEOUT_MS = 5 * 60 * 1000;
 
@@ -104,7 +104,7 @@ function load() {
     const value = JSON.parse(fs.readFileSync(DATA, "utf8"));
     return value && typeof value === "object" ? value : {};
   } catch (error) {
-    global.log?.warn?.("CAVOR", `فشل قراءة البيانات: ${error.message}`);
+    global.log?.warn?.("KAYLATH", `فشل قراءة البيانات: ${error.message}`);
     return {};
   }
 }
@@ -273,7 +273,7 @@ function isRealHumanMessage(api, event) {
 
   /*
    * أوامر البوت ليست رسائل بشرية
-   * بالنسبة لنظام الوكس.
+   * بالنسبة لنظام دوسك.
    */
   const prefix = String(global.GoatBot?.config?.prefix || "/");
 
@@ -439,7 +439,7 @@ function scheduleSilenceWatchdog(api, tid) {
     st.silenceTimer = null;
 
     const data = load();
-    const cfg = data[key]?.cavor;
+    const cfg = data[key]?.kaylath;
     const current = state[key];
 
     if (!cfg?.active || !current || !current.paused || current.leaving) {
@@ -473,7 +473,7 @@ async function sendEscapeAndLeave(api, tid) {
     try {
       await sendText(api, key, ESCAPE_MESSAGE);
     } catch (error) {
-      global.log?.warn?.("CAVOR", `فشل إرسال الهروب: ${error.message}`);
+      global.log?.warn?.("KAYLATH", `فشل إرسال الهروب: ${error.message}`);
     }
 
     await sleep(LEAVE_DELAY_MS);
@@ -487,12 +487,12 @@ async function sendEscapeAndLeave(api, tid) {
     await runGroupOperation(api, "removeUserFromGroup", botID, key);
 
   } catch (error) {
-    global.log?.warn?.("CAVOR", `تعذر خروج البوت من ${key}: ${error.message}`);
+    global.log?.warn?.("KAYLATH", `تعذر خروج البوت من ${key}: ${error.message}`);
 
   } finally {
     const data = load();
-    if (data[key]?.cavor) {
-      data[key].cavor.active = false;
+    if (data[key]?.kaylath) {
+      data[key].kaylath.active = false;
       save(data);
     }
     destroyState(key);
@@ -528,7 +528,7 @@ function scheduleResponse(api, tid) {
     st.responseTimer = null;
 
     const data = load();
-    const cfg = data[key]?.cavor;
+    const cfg = data[key]?.kaylath;
     const current = state[key];
 
     if (
@@ -547,12 +547,12 @@ function scheduleResponse(api, tid) {
       await sendText(api, key, cfg.message, item.messageID);
       current.sentInCycle += 1;
     } catch (error) {
-      global.log?.warn?.("CAVOR", `فشل إرسال رد في ${key}: ${error.message}`);
+      global.log?.warn?.("KAYLATH", `فشل إرسال رد في ${key}: ${error.message}`);
     } finally {
       current.processing = false;
     }
 
-    const fresh = load()[key]?.cavor;
+    const fresh = load()[key]?.kaylath;
 
     if (!fresh?.active || state[key] !== current) return;
 
@@ -580,7 +580,7 @@ function handleHumanMessage(api, event) {
   const tid = String(event.threadID);
 
   const data = load();
-  const cfg = data[tid]?.cavor;
+  const cfg = data[tid]?.kaylath;
 
   if (!cfg?.active) return;
 
@@ -635,7 +635,7 @@ function restoreAll(api) {
   const data = load();
 
   for (const [tid, value] of Object.entries(data)) {
-    const cfg = value?.cavor;
+    const cfg = value?.kaylath;
 
     if (!cfg?.active || !cfg.message) continue;
 
@@ -790,7 +790,7 @@ async function runGame(api, tid, targetID, game) {
           await runGroupOperation(api, method, targetID, tid);
         } catch (error) {
           global.log?.warn?.(
-            "CAVOR",
+            "KAYLATH",
             `لعبة الكرامة ${method} فشلت: ${error.message}`
           );
         }
@@ -799,7 +799,7 @@ async function runGame(api, tid, targetID, game) {
       });
     } catch (error) {
       global.log?.warn?.(
-        "CAVOR",
+        "KAYLATH",
         `إيقاف لعبة الكرامة لـ${targetID}: ${error.message}`
       );
       game.stopped = true;
@@ -828,7 +828,7 @@ async function startGame(api, tid, targetID) {
   });
 
   runGame(api, String(tid), String(targetID), game).catch(error => {
-    global.log?.warn?.("CAVOR", `لعبة الكرامة انتهت: ${error.message}`);
+    global.log?.warn?.("KAYLATH", `لعبة الكرامة انتهت: ${error.message}`);
     stopGame(tid, targetID);
   });
 
@@ -1026,7 +1026,7 @@ async function handleMemberCommand(api, event, message, action, targetID) {
 
   } catch (error) {
     global.log?.warn?.(
-      "CAVOR",
+      "KAYLATH",
       `${action} ${uid} في ${tid}: ${error.message}`
     );
 
@@ -1038,7 +1038,7 @@ async function handleMemberCommand(api, event, message, action, targetID) {
 
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CHAT SESSION (الوكس شات)
+// CHAT SESSION (دوسك شات)
 // ══════════════════════════════════════════════════════════════════════════════
 
 function cleanupChatSession(sessionKey) {
@@ -1183,7 +1183,7 @@ async function executeRemoteCommand(api, commandText, targetTid, senderID) {
 
 
 /**
- * بدء جلسة الوكس شات
+ * بدء جلسة دوسك شات
  */
 async function startChatSession(api, event, message) {
   const tid = String(event.threadID);
@@ -1194,7 +1194,7 @@ async function startChatSession(api, event, message) {
   cleanupChatSession(sessionKey);
 
   const text =
-    "🤖 الوكس شات — اختر:\n\n" +
+    "🤖 دوسك شات — اختر:\n\n" +
     "1️⃣ عرض المجموعات\n" +
     "2️⃣ طلبات المراسلة\n" +
     "3️⃣ المحتوى غير المهم أو الاحتيالي";
@@ -1218,7 +1218,7 @@ async function startChatSession(api, event, message) {
     const s = chatSessions.get(sessionKey);
 
     if (!s) {
-      await sendText(a, tid, "⏰ انتهت الجلسة. أعد إرسال /الوكس شات");
+      await sendText(a, tid, "⏰ انتهت الجلسة. أعد إرسال /دوسك شات");
       return;
     }
 
@@ -1257,7 +1257,7 @@ async function startChatSession(api, event, message) {
         if (!num || num < 1 || num > s2.threadList.length) {
           s2.step = "menu";
           cleanupChatSession(sessionKey);
-          return sendText(a2, tid, "❌ رقم غير صحيح. أعد /الوكس شات");
+          return sendText(a2, tid, "❌ رقم غير صحيح. أعد /دوسك شات");
         }
 
         const selected = s2.threadList[num - 1];
@@ -1296,7 +1296,7 @@ async function startChatSession(api, event, message) {
         if (!num || num < 1 || num > s2.threadList.length) {
           s2.step = "menu";
           cleanupChatSession(sessionKey);
-          return sendText(a2, tid, "❌ رقم غير صحيح. أعد /الوكس شات");
+          return sendText(a2, tid, "❌ رقم غير صحيح. أعد /دوسك شات");
         }
 
         const selected = s2.threadList[num - 1];
@@ -1335,7 +1335,7 @@ async function startChatSession(api, event, message) {
         if (!num || num < 1 || num > s2.threadList.length) {
           s2.step = "menu";
           cleanupChatSession(sessionKey);
-          return sendText(a2, tid, "❌ رقم غير صحيح. أعد /الوكس شات");
+          return sendText(a2, tid, "❌ رقم غير صحيح. أعد /دوسك شات");
         }
 
         const selected = s2.threadList[num - 1];
@@ -1348,7 +1348,7 @@ async function startChatSession(api, event, message) {
 
     } else {
       cleanupChatSession(sessionKey);
-      await sendText(a, tid, "❌ اختيار غير صحيح. أعد /الوكس شات");
+      await sendText(a, tid, "❌ اختيار غير صحيح. أعد /دوسك شات");
     }
   });
 }
@@ -1438,7 +1438,7 @@ async function showActionMenu(api, sessionKey) {
 
     } else {
       cleanupChatSession(sessionKey);
-      await sendText(a, tid, "❌ اختيار غير صحيح. أعد /الوكس شات");
+      await sendText(a, tid, "❌ اختيار غير صحيح. أعد /دوسك شات");
     }
   });
 }
@@ -1451,10 +1451,10 @@ async function showActionMenu(api, sessionKey) {
 module.exports = {
 
   config: {
-    name: "الوكس",
+    name: "دوسك",
     aliases: [
       "وكس",
-      "cavor",
+      "kaylath",
       "شات",
       "اضافة",
       "ازالة",
@@ -1464,31 +1464,31 @@ module.exports = {
       "كنيات",
     ],
     version: "3.0.0",
-    author: "Cavor",
+    author: "Kaylath",
     countDown: 3,
     role: 2,
     category: "management",
-    description: "Cavor-Xv3-11/x",
+    description: "Kaylath-Xv3-11/x",
     guide: {
       en:
-        "/الوكس تشغيل [message] | " +
-        "/الوكس ايقاف | " +
-        "/الوكس شات | " +
-        "/الوكس نيم [name] | " +
-        "/الوكس كنيات [nickname] | " +
-        "/الوكس تنظيف | " +
+        "/دوسك تشغيل [message] | " +
+        "/دوسك ايقاف | " +
+        "/دوسك شات | " +
+        "/دوسك نيم [name] | " +
+        "/دوسك كنيات [nickname] | " +
+        "/دوسك تنظيف | " +
         "/اضافة [ID] | " +
         "/ازالة [ID] | " +
         "/لعبة الكرامة [ID] | " +
         "/لعبة الكرامة ايقاف [ID] | " +
         "/uptime",
       ar:
-        "/الوكس تشغيل [الرسالة]\n" +
-        "/الوكس ايقاف\n" +
-        "/الوكس شات\n" +
-        "/الوكس نيم [الاسم]\n" +
-        "/الوكس كنيات [الكنية]\n" +
-        "/الوكس تنظيف\n" +
+        "/دوسك تشغيل [الرسالة]\n" +
+        "/دوسك ايقاف\n" +
+        "/دوسك شات\n" +
+        "/دوسك نيم [الاسم]\n" +
+        "/دوسك كنيات [الكنية]\n" +
+        "/دوسك تنظيف\n" +
         "/اضافة [ID]\n" +
         "/ازالة [ID]\n" +
         "/لعبة الكرامة [ID]\n" +
@@ -1520,7 +1520,7 @@ module.exports = {
 
     restoreAll(api);
 
-    const cmd = String(commandName || "الوكس").toLowerCase();
+    const cmd = String(commandName || "دوسك").toLowerCase();
     const sub = String(args[0] || "").toLowerCase();
 
 
@@ -1532,7 +1532,7 @@ module.exports = {
       const mem = process.memoryUsage();
 
       return message.reply(
-        "🔵 Αℓσx\n\n" +
+        "🔵 Dosk\n\n" +
         "╭──────────────╮\n" +
         "│ 🟢 BOT ONLINE\n" +
         "│\n" +
@@ -1642,12 +1642,12 @@ module.exports = {
 
 
     // ═══════════════════════════════════════════════════════════════════════
-    // الوكس / CAVOR
+    // دوسك / KAYLATH
     // ═══════════════════════════════════════════════════════════════════════
 
     if (
-      cmd === "الوكس" || cmd === "وكس" ||
-      cmd === "cavor"
+      cmd === "دوسك" || cmd === "وكس" ||
+      cmd === "kaylath"
     ) {
 
       // ─────────────────────────────────────────────────────────────────────
@@ -1657,8 +1657,8 @@ module.exports = {
       if (sub === "ايقاف" || sub === "إيقاف" || sub === "off") {
         const data = load();
 
-        if (data[tid]?.cavor) {
-          data[tid].cavor.active = false;
+        if (data[tid]?.kaylath) {
+          data[tid].kaylath.active = false;
           save(data);
         }
 
@@ -1706,7 +1706,7 @@ module.exports = {
       if (sub === "نيم") {
         const sub2 = String(args[1] || "").toLowerCase();
 
-        // /الوكس نيم ايقاف
+        // /دوسك نيم ايقاف
         if (sub2 === "ايقاف" || sub2 === "إيقاف" || sub2 === "off") {
           stopNameMonitor(tid);
 
@@ -1725,12 +1725,12 @@ module.exports = {
           return;
         }
 
-        // /الوكس نيم [الاسم]
+        // /دوسك نيم [الاسم]
         const desiredName = args.slice(1).join(" ").trim();
 
         if (!desiredName) {
           return message.reply(
-            "❌ الاستخدام: /الوكس نيم [الاسم] أو /الوكس نيم ايقاف"
+            "❌ الاستخدام: /دوسك نيم [الاسم] أو /دوسك نيم ايقاف"
           );
         }
 
@@ -1787,7 +1787,7 @@ module.exports = {
 
         if (!desiredNick) {
           return message.reply(
-            "❌ الاستخدام: /الوكس كنيات [الكنية]"
+            "❌ الاستخدام: /دوسك كنيات [الكنية]"
           );
         }
 
@@ -1887,19 +1887,19 @@ module.exports = {
       if (sub !== "تشغيل" && sub !== "on") {
         return message.reply(
           "❌ الاستخدام:\n" +
-          "/الوكس تشغيل [الرسالة]\n" +
-          "/الوكس ايقاف\n" +
-          "/الوكس شات\n" +
-          "/الوكس نيم [الاسم]\n" +
-          "/الوكس كنيات [الكنية]\n" +
-          "/الوكس تنظيف"
+          "/دوسك تشغيل [الرسالة]\n" +
+          "/دوسك ايقاف\n" +
+          "/دوسك شات\n" +
+          "/دوسك نيم [الاسم]\n" +
+          "/دوسك كنيات [الكنية]\n" +
+          "/دوسك تنظيف"
         );
       }
 
       const msg = args.slice(1).join(" ").trim();
 
       if (!msg) {
-        return message.reply("❌ اكتب الرسالة بعد /الوكس تشغيل.");
+        return message.reply("❌ اكتب الرسالة بعد /دوسك تشغيل.");
       }
 
       const data = load();
@@ -1912,9 +1912,9 @@ module.exports = {
        * لا نستخدم data[tid].active
        * حتى لا نكسر Angel v6.
        *
-       * CAVOR له مساحة مستقلة.
+       * KAYLATH له مساحة مستقلة.
        */
-      data[tid].cavor = {
+      data[tid].kaylath = {
         active: true,
         message: msg,
         updatedAt: Date.now(),
@@ -1939,7 +1939,7 @@ module.exports = {
         await sendText(api, tid, msg);
       } catch (error) {
         global.log?.warn?.(
-          "CAVOR",
+          "KAYLATH",
           `رسالة التشغيل فشلت: ${error.message}`
         );
       }
